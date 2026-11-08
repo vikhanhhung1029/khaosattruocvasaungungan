@@ -37,7 +37,9 @@ function MainAppContent() {
   // Pre-nap survey & tests state
   const [studentInfo, setStudentInfo] = useState<PreNapInfo>({
     studentName: '',
-    className: '11A1',
+    className: 'Khối 11',
+    gender: 'Nam',
+    school: 'THPT Chi Lăng',
     bedTime: '23:00',
     wakeTime: '06:30',
     sleepHours: 7.5,
@@ -212,7 +214,9 @@ function MainAppContent() {
 
     setStudentInfo({
       studentName: '',
-      className: '11A1',
+      className: 'Khối 11',
+    gender: 'Nam',
+    school: 'THPT Chi Lăng',
       bedTime: '23:00',
       wakeTime: '06:30',
       sleepHours: 7.5,
