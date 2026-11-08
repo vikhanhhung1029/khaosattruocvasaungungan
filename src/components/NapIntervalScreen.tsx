@@ -64,7 +64,7 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
 
   const handleCustomChange = (val: string) => {
     setCustomInput(val);
-    const parsed = parseInt(val, 10);
+    const parsed = val.trim() === '' ? NaN : Number(val);
     if (Number.isInteger(parsed) && parsed >= 5 && parsed <= 60) {
       setDurationError(null);
       setMinutes(parsed);
