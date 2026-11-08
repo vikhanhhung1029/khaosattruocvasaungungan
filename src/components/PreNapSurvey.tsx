@@ -106,7 +106,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
 
   // Calculate exact overnight sleep duration; the displayed hours are rounded to 1 decimal.
   const calculateSleepDurationMinutes = (bed: string, wake: string): number => {
-    const timePattern = /^([01]\\d|2[0-3]):([0-5]\\d)$/;
+    const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
     if (!timePattern.test(bed) || !timePattern.test(wake) || bed === wake) return 0;
     const [bH, bM] = bed.split(':').map(Number);
     const [wH, wM] = wake.split(':').map(Number);
