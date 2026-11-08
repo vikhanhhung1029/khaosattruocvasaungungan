@@ -70,8 +70,6 @@ export interface FullNapSession {
   napDurationMinutes: number;
   napNotes?: string;
   postNap: AssessmentData;
-  userId?: string;
-  submitterEmail?: string;
 }
 
 export type SurveyPhase =

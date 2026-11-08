@@ -27,7 +27,6 @@ import {
 interface ComparisonReportProps {
   session: FullNapSession;
   onRestart: () => void;
-  userEmail?: string | null;
 }
 
 export const ComparisonReport: React.FC<ComparisonReportProps> = ({
