@@ -16,9 +16,17 @@ export function formatEmailBodyText(session: FullNapSession): string {
   const student = session.studentInfo;
   const deltaAlertness = session.postNap.alertness - session.preNap.alertness;
   const deltaFatigue = session.postNap.fatigue - session.preNap.fatigue;
-  const deltaReaction = session.preNap.reactionTest.averageTime - session.postNap.reactionTest.averageTime;
-  const reactionImprovementPct = session.preNap.reactionTest.averageTime > 0
-    ? (((session.preNap.reactionTest.averageTime - session.postNap.reactionTest.averageTime) / session.preNap.reactionTest.averageTime) * 100).toFixed(1)
+  const getAverageReactionTime = (trials: number[], fallback: number) => {
+    const validTrials = trials.filter((value) => Number.isFinite(value) && value > 0);
+    return validTrials.length > 0
+      ? Math.round(validTrials.reduce((sum, value) => sum + value, 0) / validTrials.length)
+      : fallback;
+  };
+  const preReactionTime = getAverageReactionTime(session.preNap.reactionTest.trials, session.preNap.reactionTest.averageTime);
+  const postReactionTime = getAverageReactionTime(session.postNap.reactionTest.trials, session.postNap.reactionTest.averageTime);
+  const deltaReaction = preReactionTime - postReactionTime;
+  const reactionImprovementPct = preReactionTime > 0
+    ? (((preReactionTime - postReactionTime) / preReactionTime) * 100).toFixed(1)
     : '0';
 
   const preMemDigits = Math.max(1, session.preNap.memoryTest.totalDigits || 21);
@@ -65,7 +73,7 @@ export function formatEmailBodyText(session: FullNapSession): string {
     `   Trước khi ngủ: ${session.preNap.fatigue}/5  ==>  Sau khi ngủ: ${session.postNap.fatigue}/5  (${deltaFatigue >= 0 ? `+${deltaFatigue}` : deltaFatigue} điểm)`,
     ``,
     `3. Thời gian phản xạ nhanh (ms - 5 lần thử):`,
-    `   Trước khi ngủ: ${session.preNap.reactionTest.averageTime}ms  ==>  Sau khi ngủ: ${session.postNap.reactionTest.averageTime}ms`,
+    `   Trước khi ngủ: ${preReactionTime}ms  ==>  Sau khi ngủ: ${postReactionTime}ms`,
     `   (Thay đổi thời gian phản xạ: ${deltaReaction >= 0 ? `giảm ${deltaReaction}ms (${reactionImprovementPct}% thời gian)` : `tăng ${Math.abs(deltaReaction)}ms`})`,
     ``,
     `4. Chú ý chọn lọc (chuẩn 10 chữ A / 10 giây):`,
@@ -77,7 +85,7 @@ export function formatEmailBodyText(session: FullNapSession): string {
     `III. CÁCH TÍNH CÁC CHỈ SỐ:`,
     `- Tỉnh táo: điểm sau - điểm trước = ${deltaAlertness} điểm (thang 1-5).`,
     `- Mức độ mệt mỏi: điểm sau - điểm trước = ${deltaFatigue} điểm; điểm cao hơn biểu thị ít mệt hơn.`,
-    `- Phản xạ: thời gian trung bình = tổng các lần bấm hợp lệ / số lần hợp lệ; mức rút ngắn = ${deltaReaction} ms; tỷ lệ thay đổi = (${session.preNap.reactionTest.averageTime} - ${session.postNap.reactionTest.averageTime}) / ${session.preNap.reactionTest.averageTime || 1} x 100 = ${reactionImprovementPct}%.`,
+    `- Phản xạ: thời gian trung bình = tổng các lần bấm hợp lệ / số lần hợp lệ; mức rút ngắn = ${deltaReaction} ms; tỷ lệ thay đổi = (${preReactionTime} - ${postReactionTime}) / ${session.preNap.reactionTest.averageTime || 1} x 100 = ${reactionImprovementPct}%.`,
     `  Số lần bấm sớm (ghi riêng): trước ${session.preNap.reactionTest.faults}, sau ${session.postNap.reactionTest.faults}.`,
     `- Chú ý: điểm ròng = giới hạn trong 0-100% của [(chữ A đúng - bấm nhầm) / số chữ A mục tiêu x 100]; trước: max(0, min(100, (${session.preNap.attentionTest.foundCorrect} - ${session.preNap.attentionTest.errors}) / ${preAttentionTargets} x 100)) = ${preAttentionPercent}%; sau: max(0, min(100, (${session.postNap.attentionTest.foundCorrect} - ${session.postNap.attentionTest.errors}) / ${postAttentionTargets} x 100)) = ${postAttentionPercent}%.`,
     `- Trí nhớ: tỷ lệ đúng = số vị trí đúng / tổng số vị trí x 100; trước: ${session.preNap.memoryTest.correctDigitsCount}/${preMemDigits} x 100 = ${preMemoryPercent}%; sau: ${session.postNap.memoryTest.correctDigitsCount}/${postMemDigits} x 100 = ${postMemoryPercent}%. Bài chuẩn gồm 3 lượt x 7 chữ số = 21 vị trí.`, 
@@ -125,7 +133,7 @@ export async function sendSurveyImmediately(
     'Nước ngọt / có ga': student.hadSoda ? `Có (${student.sodaDetails || 'Đã dùng'})` : 'Không',
     'Mức tỉnh táo (1-5)': `Trước: ${session.preNap.alertness}/5  ==>  Sau: ${session.postNap.alertness}/5`,
     'Mức độ mệt mỏi (1-5)': `Trước: ${session.preNap.fatigue}/5  ==>  Sau: ${session.postNap.fatigue}/5`,
-    'Thời gian phản xạ': `Trước: ${session.preNap.reactionTest.averageTime}ms  ==>  Sau: ${session.postNap.reactionTest.averageTime}ms`,
+    'Thời gian phản xạ': `Trước: ${preReactionTime}ms  ==>  Sau: ${postReactionTime}ms`,
     'Chú ý chọn lọc': `Trước: ${session.preNap.attentionTest.foundCorrect}/${preAttentionTargets} (lỗi: ${session.preNap.attentionTest.errors}, điểm ròng ${preAttentionPercent}%) ==> Sau: ${session.postNap.attentionTest.foundCorrect}/${postAttentionTargets} (lỗi: ${session.postNap.attentionTest.errors}, điểm ròng ${postAttentionPercent}%)`,
     'Trí nhớ ngắn hạn (3 bài)': `Trước: Đúng ${session.preNap.memoryTest.correctDigitsCount}/${preMemDigits} (${preMemoryPercent}%) ==> Sau: Đúng ${session.postNap.memoryTest.correctDigitsCount}/${postMemDigits} (${postMemoryPercent}%)`,
     'Nội dung chi tiết báo cáo': bodyText,
