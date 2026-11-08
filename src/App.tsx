@@ -139,8 +139,8 @@ function MainAppContent() {
   const handlePostMemoryComplete = async (result: MemoryTestResult) => {
     setPostMemory(result);
 
-    if (!preReaction || !preAttention || !preMemory) {
-      console.error('Missing pre-nap test results');
+    if (!preReaction || !preAttention || !preMemory || !postReaction || !postAttention) {
+      console.error('Missing pre-nap or post-nap test results; refusing to create an incomplete assessment.');
       return;
     }
 
@@ -156,20 +156,8 @@ function MainAppContent() {
     const postData: AssessmentData = {
       alertness: postAlertness,
       fatigue: postFatigue,
-      reactionTest: postReaction || {
-        trials: [280, 290, 275, 260, 285],
-        averageTime: 278,
-        fastestTime: 260,
-        faults: 0,
-      },
-      attentionTest: postAttention || {
-        totalTargetA: 10,
-        foundCorrect: 10,
-        errors: 0,
-        missed: 0,
-        accuracyPercentage: 100,
-        timeSpentSeconds: 10,
-      },
+      reactionTest: postReaction,
+      attentionTest: postAttention,
       memoryTest: result,
       completedAt: new Date().toISOString(),
     };
