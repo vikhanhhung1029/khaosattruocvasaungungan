@@ -1,4 +1,4 @@
-import React, { useState, useId, useEffect } from 'react';
+import React, { useState, useId } from 'react';
 import { PreNapInfo, AlertnessLevel, FatigueLevel } from '../types';
 import { User, Clock, Coffee, Smile, Moon, ArrowRight, AlertCircle, ShieldCheck, GlassWater } from 'lucide-react';
 
@@ -33,7 +33,13 @@ export const MOOD_OPTIONS: { id: 'thoai_mai' | 'binh_thuong' | 'cang_thang' | 'l
 ];
 
 const GRADE_LEVELS = ['10', '11', '12'] as const;
-const CLASS_SECTIONS = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10'] as const;
+const SCHOOLS = [
+  'THPT Chi Lăng',
+  'THPT Hòa Bình',
+  'Phổ thông DTNT THCS & THPT huyện Chi Lăng',
+  'Trường THPT Tân Thành',
+] as const;
+const GENDERS = ['Nam', 'Nữ'] as const;
 
 export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   initialInfo,
@@ -43,19 +49,14 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
 }) => {
   const [studentName, setStudentName] = useState(initialInfo?.studentName || '');
   
-  // Parse initial class (e.g. "11A2" -> grade "11", section "A2")
-  const parseGradeAndSection = (raw?: string) => {
-    if (!raw) return { grade: '11', section: 'A1' };
-    const match = raw.match(/^(10|11|12)(A[1-9]|A10)$/);
-    if (match) {
-      return { grade: match[1], section: match[2] };
-    }
-    return { grade: '11', section: 'A1' };
-  };
-
-  const initialParsed = parseGradeAndSection(initialInfo?.className);
-  const [selectedGrade, setSelectedGrade] = useState<string>(initialParsed.grade);
-  const [selectedSection, setSelectedSection] = useState<string>(initialParsed.section);
+  const initialGrade = initialInfo?.className?.match(/10|11|12/)?.[0] || '11';
+  const [selectedGrade, setSelectedGrade] = useState<string>(initialGrade);
+  const [selectedGender, setSelectedGender] = useState<'Nam' | 'Nữ'>(initialInfo?.gender || 'Nam');
+  const [selectedSchool, setSelectedSchool] = useState<string>(
+    initialInfo?.school && SCHOOLS.includes(initialInfo.school as typeof SCHOOLS[number])
+      ? initialInfo.school
+      : SCHOOLS[0]
+  );
 
   const [bedTime, setBedTime] = useState(initialInfo?.bedTime || '23:00');
   const [wakeTime, setWakeTime] = useState(initialInfo?.wakeTime || '06:30');
@@ -75,17 +76,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   const [fatigue, setFatigue] = useState<FatigueLevel>(initialFatigue);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Update grade & section if initialInfo changes
-  useEffect(() => {
-    if (initialInfo?.className) {
-      const parsed = parseGradeAndSection(initialInfo.className);
-      setSelectedGrade(parsed.grade);
-      setSelectedSection(parsed.section);
-    }
-  }, [initialInfo?.className]);
-
-  // Combined class string: e.g. "11" + "A2" -> "11A2"
-  const combinedClassName = `${selectedGrade}${selectedSection}`;
+  const selectedClassName = `Khối ${selectedGrade}`;
 
   // Accessible IDs
   const studentNameId = useId();
@@ -119,23 +110,13 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanName = studentName.trim();
-    if (!cleanName) {
-      setErrorMsg('Vui lòng nhập họ và tên học sinh để lưu báo cáo.');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (!/^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵýỷỹ\s]+$/.test(cleanName)) {
-      setErrorMsg('Họ và tên chỉ được nhập chữ, không được nhập số hoặc ký tự đặc biệt.');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
     setErrorMsg(null);
     onSubmit(
       {
         studentName: cleanName,
-        className: combinedClassName,
+        className: selectedClassName,
+        gender: selectedGender,
+        school: selectedSchool,
         bedTime,
         wakeTime,
         sleepHours: calculatedSleepHours,
@@ -200,39 +181,49 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
           {/* Họ và tên */}
           <div>
             <label htmlFor={studentNameId} className="block text-xs font-semibold text-slate-700 mb-1">
-              Họ và tên học sinh <span className="text-red-500">*</span>
+              Họ và tên học sinh <span className="text-slate-400 font-normal">(Không bắt buộc)</span>
             </label>
             <input
               id={studentNameId}
               type="text"
-              required
               value={studentName}
               onChange={handleNameChange}
               placeholder="VD: Nguyễn Văn An"
               className="w-full h-11 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
             />
             <span className="text-[11px] text-slate-500 mt-1 block">
-              * Chỉ nhập chữ cái tiếng Việt, không chứa số hoặc ký tự đặc biệt
+              Có thể để trống. Nếu nhập, chỉ sử dụng chữ cái tiếng Việt và dấu cách.
             </span>
           </div>
 
-          {/* Chọn Lớp: Khối 10-12 và Lớp A1-A10 */}
-          <div className="space-y-3 pt-1">
-            <label className="block text-xs font-semibold text-slate-700">
-              Chọn lớp:
-            </label>
-
-            {/* Bước 1: Chọn Khối (10, 11, 12) */}
+          {/* Thông tin trường, khối và giới tính */}
+          <div className="space-y-4 pt-1">
             <div>
-              <span className="text-[11px] font-semibold text-slate-500 block mb-1.5">
-                Khối:
-              </span>
+              <label htmlFor="school-select" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Trường THPT:
+              </label>
+              <select
+                id="school-select"
+                value={selectedSchool}
+                onChange={(e) => setSelectedSchool(e.target.value)}
+                required
+                className="w-full min-h-11 px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+              >
+                {SCHOOLS.map((school) => (
+                  <option key={school} value={school}>{school}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <span className="text-[11px] font-semibold text-slate-500 block mb-1.5">Khối:</span>
               <div className="grid grid-cols-3 gap-2">
                 {GRADE_LEVELS.map((grade) => (
                   <button
                     key={grade}
                     type="button"
                     onClick={() => setSelectedGrade(grade)}
+                    aria-pressed={selectedGrade === grade}
                     className={`h-11 rounded-xl border text-xs font-bold transition-all ${
                       selectedGrade === grade
                         ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm'
@@ -245,32 +236,25 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
               </div>
             </div>
 
-            {/* Bước 2: Chọn Lớp/Phòng (A1 - A10) */}
             <div>
-              <span className="text-[11px] font-semibold text-slate-500 block mb-1.5">
-                Lớp:
-              </span>
-              <div className="grid grid-cols-5 sm:grid-cols-10 gap-1.5">
-                {CLASS_SECTIONS.map((sec) => (
+              <span className="text-[11px] font-semibold text-slate-500 block mb-1.5">Giới tính:</span>
+              <div className="grid grid-cols-2 gap-2">
+                {GENDERS.map((gender) => (
                   <button
-                    key={sec}
+                    key={gender}
                     type="button"
-                    onClick={() => setSelectedSection(sec)}
-                    className={`h-10 rounded-xl border text-xs font-bold font-mono transition-all ${
-                      selectedSection === sec
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700 ring-2 ring-indigo-500/30'
-                        : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                    onClick={() => setSelectedGender(gender)}
+                    aria-pressed={selectedGender === gender}
+                    className={`h-11 rounded-xl border text-xs font-bold transition-all ${
+                      selectedGender === gender
+                        ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm'
+                        : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
                     }`}
                   >
-                    {sec}
+                    {gender}
                   </button>
                 ))}
               </div>
-            </div>
-
-            {/* Lớp: 11A10 nhỏ nhỏ ở bên dưới */}
-            <div className="text-[11px] text-slate-500 pt-0.5">
-              Lớp: <span className="font-semibold font-mono text-slate-800">{combinedClassName}</span>
             </div>
           </div>
         </div>
