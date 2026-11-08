@@ -271,11 +271,11 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
         <p className="text-xs text-slate-600 leading-relaxed">
           {minutes <= 20 ? (
             <span>
-              <strong>15 - 20 phút (Lý tưởng):</strong> Giúp phục hồi nhanh sự tỉnh táo và phản xạ của não bộ mà không rơi vào pha ngủ sâu, bạn sẽ thức dậy sảng khoái và không bị chuếnh choáng.
+              <strong>5 - 20 phút:</strong> Thời lượng ngắn có thể giúp nghỉ ngơi; mức độ tỉnh táo sau khi thức dậy khác nhau tùy từng người.
             </span>
           ) : minutes <= 30 ? (
             <span>
-              <strong>25 - 30 phút:</strong> Tốt cho việc nạp năng lượng cơ bắp và giảm mệt mỏi, tuy nhiên cần vài phút vận động nhẹ sau khi thức dậy để đạt sự tập trung tối đa.
+              <strong>21 - 30 phút:</strong> Có thể giúp giảm cảm giác mệt mỏi; trạng thái tỉnh táo sau khi thức dậy khác nhau tùy từng người.
             </span>
           ) : (
             <span>
