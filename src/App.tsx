@@ -107,6 +107,10 @@ function MainAppContent() {
 
   // Handle Step 5: Nap duration confirmation
   const handleConfirmNap = (duration: number, notes?: string) => {
+    if (!Number.isInteger(duration) || duration < 5 || duration > 60) {
+      console.error('Invalid nap duration. Expected an integer from 5 to 60 minutes.');
+      return;
+    }
     setNapMinutes(duration);
     setNapNotes(notes || '');
     setPhase('post_survey');
