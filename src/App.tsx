@@ -33,6 +33,8 @@ function MainAppContent() {
   // Current survey phase
   const [phase, setPhase] = useState<SurveyPhase>('pre_survey');
   const [surveyKey, setSurveyKey] = useState<number>(0);
+  const [surveyStartedAt, setSurveyStartedAt] = useState<string | null>(null);
+  const [preAssessmentCompletedAt, setPreAssessmentCompletedAt] = useState<string | null>(null);
 
   // Pre-nap survey & tests state
   const [studentInfo, setStudentInfo] = useState<PreNapInfo>({
@@ -74,6 +76,7 @@ function MainAppContent() {
     alertness: AlertnessLevel,
     fatigue: FatigueLevel
   ) => {
+    setSurveyStartedAt(new Date().toISOString());
     setStudentInfo(info);
     setPreAlertness(alertness);
     setPreFatigue(fatigue);
@@ -98,6 +101,7 @@ function MainAppContent() {
   // Handle Step 4: Pre-nap Memory Test
   const handlePreMemoryComplete = (result: MemoryTestResult) => {
     setPreMemory(result);
+    setPreAssessmentCompletedAt(new Date().toISOString());
     setPhase('nap_interval');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -147,7 +151,7 @@ function MainAppContent() {
       reactionTest: preReaction,
       attentionTest: preAttention,
       memoryTest: preMemory,
-      completedAt: new Date(Date.now() - napMinutes * 60000).toISOString(),
+      completedAt: preAssessmentCompletedAt || new Date().toISOString(),
     };
 
     const postData: AssessmentData = {
@@ -171,9 +175,12 @@ function MainAppContent() {
       completedAt: new Date().toISOString(),
     };
 
+    const completedAt = new Date().toISOString();
     const session: FullNapSession = {
       id: 'session_' + Date.now(),
-      createdAt: new Date().toISOString(),
+      createdAt: completedAt,
+      startedAt: surveyStartedAt || completedAt,
+      completedAt,
       studentInfo,
       preNap: preData,
       napDurationMinutes: napMinutes,
@@ -212,6 +219,8 @@ function MainAppContent() {
       // ignore
     }
 
+    setSurveyStartedAt(null);
+    setPreAssessmentCompletedAt(null);
     setStudentInfo({
       studentName: '',
       className: 'Khối 11',
