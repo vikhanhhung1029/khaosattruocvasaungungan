@@ -93,9 +93,9 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                     </div>
                     <div>
                       <div className="text-xs font-bold text-slate-900 flex items-center gap-2">
-                        <span>{session.studentInfo.studentName}</span>
+                        <span>{session.studentInfo.studentName || 'Không ghi tên'}</span>
                         <span className="text-[10px] text-slate-500">
-                          (Lớp {session.studentInfo.className} · Ngủ {session.napDurationMinutes}p)
+                          ({session.studentInfo.school || 'Chưa rõ trường'} · {session.studentInfo.className} · Ngủ {session.napDurationMinutes}p)
                         </span>
                       </div>
                       <div className="text-[11px] text-slate-600 flex items-center gap-2 mt-0.5">
