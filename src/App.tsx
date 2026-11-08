@@ -87,18 +87,12 @@ function MainAppContent() {
 
   // Final Session Result
   const [finalSession, setFinalSession] = useState<FullNapSession | null>(null);
-  const [emailStatus, setEmailStatus] = useState<'sending' | 'sent' | 'failed' | null>(null);
-  const [emailError, setEmailError] = useState<string | null>(null);
-
+  // Send results silently in the background; delivery failures are logged for administrators.
   const sendSessionEmail = async (session: FullNapSession) => {
-    setEmailStatus('sending');
-    setEmailError(null);
     try {
       await sendSurveyImmediately(session);
-      setEmailStatus('sent');
     } catch (error) {
-      setEmailStatus('failed');
-      setEmailError(error instanceof Error ? error.message : 'Không xác định được lỗi gửi email.');
+      console.error('Không thể gửi email kết quả khảo sát:', error);
     }
   };
 
@@ -248,8 +242,8 @@ function MainAppContent() {
       console.warn('Global survey storage note:', err);
     }
 
-    // Send results and keep the delivery state visible in the report.
-    await sendSessionEmail(session);
+    // Automatically send completed results without showing email details to participants.
+    void sendSessionEmail(session);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -398,9 +392,6 @@ function MainAppContent() {
           <ComparisonReport
             session={finalSession}
             onRestart={handleReset}
-            emailStatus={emailStatus}
-            emailError={emailError}
-            onRetryEmail={() => sendSessionEmail(finalSession)}
           />
         )}
       </main>
