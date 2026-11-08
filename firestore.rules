@@ -1,0 +1,37 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isSystemOwner() {
+      return isSignedIn() && (
+        request.auth.token.email == 'vikhanhhung1029@gmail.com' ||
+        request.auth.token.email.lower() == 'vikhanhhung1029@gmail.com'
+      );
+    }
+
+    // Global all_surveys collection: fully open for read and write (anonymous and logged in participants)
+    match /all_surveys/{sessionId} {
+      allow read, write: if true;
+    }
+
+    // User profile documents & private sessions
+    match /users/{userId} {
+      allow read, write: if true;
+
+      match /sessions/{sessionId} {
+        allow read, write: if true;
+      }
+    }
+
+    // Authorized viewers list
+    match /authorized_viewers/{emailDoc} {
+      allow read, write: if true;
+    }
+  }
+}
