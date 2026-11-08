@@ -2,6 +2,16 @@ import { FullNapSession } from '../types';
 
 export const TARGET_GMAIL = 'vikhanhhung1029@gmail.com';
 
+function formatElapsedDuration(startValue: string, endValue: string): string {
+  const start = new Date(startValue).getTime();
+  const end = new Date(endValue).getTime();
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return 'Không xác định';
+  const totalSeconds = Math.floor((end - start) / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return minutes > 0 ? `${minutes} phút ${seconds} giây` : `${seconds} giây`;
+}
+
 export function formatEmailBodyText(session: FullNapSession): string {
   const student = session.studentInfo;
   const deltaAlertness = session.postNap.alertness - session.preNap.alertness;
@@ -11,15 +21,21 @@ export function formatEmailBodyText(session: FullNapSession): string {
     ? (((session.preNap.reactionTest.averageTime - session.postNap.reactionTest.averageTime) / session.preNap.reactionTest.averageTime) * 100).toFixed(1)
     : '0';
 
-  const preMemDigits = session.preNap.memoryTest.totalDigits || 21;
-  const postMemDigits = session.postNap.memoryTest.totalDigits || 21;
+  const preMemDigits = Math.max(1, session.preNap.memoryTest.totalDigits || 21);
+  const postMemDigits = Math.max(1, session.postNap.memoryTest.totalDigits || 21);
+  const preMemoryPercent = Math.min(100, Math.max(0, Math.round((session.preNap.memoryTest.correctDigitsCount / preMemDigits) * 100)));
+  const postMemoryPercent = Math.min(100, Math.max(0, Math.round((session.postNap.memoryTest.correctDigitsCount / postMemDigits) * 100)));
+  const preAttentionTargets = Math.max(1, session.preNap.attentionTest.totalTargetA || 10);
+  const postAttentionTargets = Math.max(1, session.postNap.attentionTest.totalTargetA || 10);
+  const preAttentionPercent = Math.min(100, Math.max(0, Math.round(((session.preNap.attentionTest.foundCorrect - session.preNap.attentionTest.errors) / preAttentionTargets) * 100)));
+  const postAttentionPercent = Math.min(100, Math.max(0, Math.round(((session.postNap.attentionTest.foundCorrect - session.postNap.attentionTest.errors) / postAttentionTargets) * 100)));
 
   const lines = [
     `BÁO CÁO KẾT QUẢ KHẢO SÁT & ĐÁNH GIÁ GIẤC NGỦ NGẮN`,
     `======================================================`,
     `Thời điểm bắt đầu khảo sát: ${new Date(session.startedAt || session.createdAt).toLocaleString('vi-VN')}`,
     `Thời điểm kết thúc khảo sát: ${new Date(session.completedAt || session.createdAt).toLocaleString('vi-VN')}`,
-    `Tổng thời gian thực hiện: ${Math.max(0, Math.round((new Date(session.completedAt || session.createdAt).getTime() - new Date(session.startedAt || session.createdAt).getTime()) / 60000))} phút`,
+    `Tổng thời gian thực hiện: ${formatElapsedDuration(session.startedAt || session.createdAt, session.completedAt || session.createdAt)}`, 
     `Mã phiên: ${session.id}`,
     `Mã người thực hiện (thiết bị/trình duyệt): ${student.studentId || 'Chưa có'}`,
     ``,
@@ -56,15 +72,15 @@ export function formatEmailBodyText(session: FullNapSession): string {
     `   Trước khi ngủ: Đúng ${session.preNap.attentionTest.foundCorrect}/10 (lỗi: ${session.preNap.attentionTest.errors})  ==>  Sau khi ngủ: Đúng ${session.postNap.attentionTest.foundCorrect}/10 (lỗi: ${session.postNap.attentionTest.errors})`,
     ``,
     `5. Trí nhớ ngắn hạn (3 bài kiểm tra - nhớ đồng thời 7 số trong 7 giây):`,
-    `   Trước khi ngủ: Nhớ đúng ${session.preNap.memoryTest.correctDigitsCount}/${preMemDigits} số (${session.preNap.memoryTest.accuracyPercentage}%)  ==>  Sau khi ngủ: Nhớ đúng ${session.postNap.memoryTest.correctDigitsCount}/${postMemDigits} số (${session.postNap.memoryTest.accuracyPercentage}%)`,
+    `   Trước khi ngủ: Nhớ đúng ${session.preNap.memoryTest.correctDigitsCount}/${preMemDigits} vị trí (${preMemoryPercent}%)  ==>  Sau khi ngủ: Nhớ đúng ${session.postNap.memoryTest.correctDigitsCount}/${postMemDigits} vị trí (${postMemoryPercent}%)`,
     ``,
     `III. CÁCH TÍNH CÁC CHỈ SỐ:`,
     `- Tỉnh táo: điểm sau - điểm trước = ${deltaAlertness} điểm (thang 1-5).`,
     `- Mức độ mệt mỏi: điểm sau - điểm trước = ${deltaFatigue} điểm; điểm cao hơn biểu thị ít mệt hơn.`,
     `- Phản xạ: thời gian trung bình = tổng các lần bấm hợp lệ / số lần hợp lệ; mức rút ngắn = ${deltaReaction} ms; tỷ lệ thay đổi = (${session.preNap.reactionTest.averageTime} - ${session.postNap.reactionTest.averageTime}) / ${session.preNap.reactionTest.averageTime || 1} x 100 = ${reactionImprovementPct}%.`,
     `  Số lần bấm sớm (ghi riêng): trước ${session.preNap.reactionTest.faults}, sau ${session.postNap.reactionTest.faults}.`,
-    `- Chú ý: điểm ròng = max(0, (chữ A đúng - bấm nhầm) / 10 x 100); trước ${Math.max(0, Math.round(((session.preNap.attentionTest.foundCorrect - session.preNap.attentionTest.errors) / 10) * 100))}%, sau ${Math.max(0, Math.round(((session.postNap.attentionTest.foundCorrect - session.postNap.attentionTest.errors) / 10) * 100))}%.`,
-    `- Trí nhớ: tỷ lệ đúng = số vị trí đúng / tổng số vị trí x 100; 3 lượt x 7 chữ số = 21 vị trí.`,
+    `- Chú ý: điểm ròng = giới hạn trong 0-100% của [(chữ A đúng - bấm nhầm) / số chữ A mục tiêu x 100]; trước: max(0, min(100, (${session.preNap.attentionTest.foundCorrect} - ${session.preNap.attentionTest.errors}) / ${preAttentionTargets} x 100)) = ${preAttentionPercent}%; sau: max(0, min(100, (${session.postNap.attentionTest.foundCorrect} - ${session.postNap.attentionTest.errors}) / ${postAttentionTargets} x 100)) = ${postAttentionPercent}%.`,
+    `- Trí nhớ: tỷ lệ đúng = số vị trí đúng / tổng số vị trí x 100; trước: ${session.preNap.memoryTest.correctDigitsCount}/${preMemDigits} x 100 = ${preMemoryPercent}%; sau: ${session.postNap.memoryTest.correctDigitsCount}/${postMemDigits} x 100 = ${postMemoryPercent}%. Bài chuẩn gồm 3 lượt x 7 chữ số = 21 vị trí.`, 
     `- Tổng hợp: đếm số lĩnh vực tốt hơn/không đổi/giảm; không lấy trung bình các tỷ lệ khác đơn vị.`,
     ``,
     `======================================================`,
@@ -94,7 +110,7 @@ export async function sendSurveyImmediately(
     'Trường': student.school || 'Chưa cung cấp',
     'Thời điểm bắt đầu khảo sát': new Date(session.startedAt || session.createdAt).toLocaleString('vi-VN'),
     'Thời điểm kết thúc khảo sát': new Date(session.completedAt || session.createdAt).toLocaleString('vi-VN'),
-    'Tổng thời gian thực hiện': `${Math.max(0, Math.round((new Date(session.completedAt || session.createdAt).getTime() - new Date(session.startedAt || session.createdAt).getTime()) / 60000))} phút`,
+    'Tổng thời gian thực hiện': formatElapsedDuration(session.startedAt || session.createdAt, session.completedAt || session.createdAt),
     'Thời lượng giấc ngủ ngắn': `${session.napDurationMinutes} phút`,
     'Giờ ngủ đêm qua': `${student.bedTime} - ${student.wakeTime} (${student.sleepHours} giờ)`,
     'Uống cà phê trước ngủ': student.hadCoffee ? `Có (${student.coffeeDetails || 'Đã dùng'})` : 'Không',
@@ -103,7 +119,7 @@ export async function sendSurveyImmediately(
     'Mức độ mệt mỏi (1-5)': `Trước: ${session.preNap.fatigue}/5  ==>  Sau: ${session.postNap.fatigue}/5`,
     'Thời gian phản xạ': `Trước: ${session.preNap.reactionTest.averageTime}ms  ==>  Sau: ${session.postNap.reactionTest.averageTime}ms`,
     'Chú ý chọn lọc': `Trước: ${session.preNap.attentionTest.foundCorrect}/10 (lỗi: ${session.preNap.attentionTest.errors}) ==> Sau: ${session.postNap.attentionTest.foundCorrect}/10 (lỗi: ${session.postNap.attentionTest.errors})`,
-    'Trí nhớ ngắn hạn (3 bài)': `Trước: Đúng ${session.preNap.memoryTest.correctDigitsCount}/${session.preNap.memoryTest.totalDigits || 21} (${session.preNap.memoryTest.accuracyPercentage}%) ==> Sau: Đúng ${session.postNap.memoryTest.correctDigitsCount}/${session.postNap.memoryTest.totalDigits || 21} (${session.postNap.memoryTest.accuracyPercentage}%)`,
+    'Trí nhớ ngắn hạn (3 bài)': `Trước: Đúng ${session.preNap.memoryTest.correctDigitsCount}/${preMemDigits} (${preMemoryPercent}%) ==> Sau: Đúng ${session.postNap.memoryTest.correctDigitsCount}/${postMemDigits} (${postMemoryPercent}%)`,
     'Nội dung chi tiết báo cáo': bodyText,
   };
 
