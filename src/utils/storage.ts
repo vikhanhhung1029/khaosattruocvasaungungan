@@ -72,8 +72,8 @@ export function generateSampleSession(): FullNapSession {
       memoryTest: {
         targetSequence: '7392158',
         userSequence: '7392108',
-        correctDigitsCount: 6,
-        totalDigits: 7,
+        correctDigitsCount: 18,
+        totalDigits: 21,
         accuracyPercentage: 86,
         isExactMatch: false,
       },
@@ -101,8 +101,8 @@ export function generateSampleSession(): FullNapSession {
       memoryTest: {
         targetSequence: '5841963',
         userSequence: '5841963',
-        correctDigitsCount: 7,
-        totalDigits: 7,
+        correctDigitsCount: 21,
+        totalDigits: 21,
         accuracyPercentage: 100,
         isExactMatch: true,
       },
