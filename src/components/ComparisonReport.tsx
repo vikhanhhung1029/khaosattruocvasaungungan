@@ -390,7 +390,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           </div>
         </div>
 
-        {/* Summary of directional changes across five distinct metrics */}}
+        {/* Summary of directional changes across five distinct metrics */}
         <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-50 via-violet-50 to-emerald-50 border border-indigo-200/80 flex flex-col md:flex-row items-center justify-between gap-5">
           <div className="space-y-1.5 text-center md:text-left flex-1">
             <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-bold text-indigo-950 uppercase tracking-wider">
