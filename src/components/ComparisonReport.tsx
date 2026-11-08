@@ -103,21 +103,27 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   const memoryPercentDelta = postMemoryPercent - preMemoryPercent;
   const memoryPercentChange = memoryPercentDelta;
 
-  // 6. Comprehensive Scientific Average Improvement Percentage across all 5 indicators:
-  // Average % change = (Alertness% + Fatigue% + ReactionSpeed% + Attention% + Memory%) / 5
-  const averageImprovementPercent = parseFloat(
-    (
-      (alertnessPercentChange +
-        fatiguePercentChange +
-        reactionSpeedGainPercent +
-        attentionPercentChange +
-        memoryPercentChange) /
-      5
-    ).toFixed(1)
-  );
+  // A single average percentage is intentionally not calculated: the five measures
+  // use different scales/units. Summarize direction by counting improved domains instead.
+  const improvedIndicatorsCount = [
+    alertnessDelta > 0,
+    fatigueDelta > 0,
+    reactionTimeSavedMs > 0,
+    attentionAccuracyDelta > 0,
+    memoryPercentDelta > 0,
+  ].filter(Boolean).length;
+  const declinedIndicatorsCount = [
+    alertnessDelta < 0,
+    fatigueDelta < 0,
+    reactionTimeSavedMs < 0,
+    attentionAccuracyDelta < 0,
+    memoryPercentDelta < 0,
+  ].filter(Boolean).length;
+  const unchangedIndicatorsCount = 5 - improvedIndicatorsCount - declinedIndicatorsCount;
+  const formatSigned = (value: number, suffix = '') => `${value > 0 ? '+' : ''}${value}${suffix}`;
 
   const handleShare = () => {
-    const text = `Báo cáo đánh giá giấc ngủ ngắn [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.studentName || 'Không ghi tên'} (${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, ngủ ${napDurationMinutes} phút). Chỉ số tổng hợp sau ngủ ngắn: ${averageImprovementPercent >= 0 ? `Tăng +${averageImprovementPercent}%` : `Giảm -${Math.abs(averageImprovementPercent)}%`}. Tốc độ phản xạ: ${reactionSpeedGainPercent > 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`}, mức tỉnh táo: ${postNap.alertness}/5 điểm.`;
+    const text = `Báo cáo đánh giá giấc ngủ ngắn [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.studentName || 'Không ghi tên'} (${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, ngủ ${napDurationMinutes} phút). Số chỉ số cải thiện: ${improvedIndicatorsCount}/5; không đổi: ${unchangedIndicatorsCount}/5; giảm: ${declinedIndicatorsCount}/5. Tốc độ phản xạ: ${reactionSpeedGainPercent > 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`}, mức tỉnh táo: ${postNap.alertness}/5 điểm.`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopyNotice(true);
@@ -388,32 +394,47 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
               <span>Chỉ số tổng hợp sau ngủ ngắn</span>
             </div>
             <p className="text-xs text-slate-600 max-w-lg leading-relaxed">
-              Tính toán khoa học trung bình cộng % thay đổi của 5 chỉ số: Tỉnh táo, Mệt mỏi, Tốc độ phản xạ, Chú ý chọn lọc và Trí nhớ ngắn hạn.
+              Không gộp thành một tỷ lệ phần trăm vì các bài đo dùng thang điểm và đơn vị khác nhau. Báo cáo đếm số lĩnh vực cải thiện, không đổi hoặc giảm.
             </p>
 
             {/* Individual Breakdown */}
             <div className="text-[11px] text-slate-600 pt-1 flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1">
-              <span>• Tỉnh táo: <strong className={alertnessPercentChange >= 0 ? 'text-indigo-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{alertnessPercentChange >= 0 ? `+${alertnessPercentChange}%` : `${alertnessPercentChange}%`}</strong></span>
-              <span>• Mệt mỏi: <strong className={fatiguePercentChange >= 0 ? 'text-amber-800 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{fatiguePercentChange >= 0 ? `+${fatiguePercentChange}%` : `${fatiguePercentChange}%`}</strong></span>
+              <span>• Tỉnh táo: <strong className={alertnessPercentChange >= 0 ? 'text-indigo-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(alertnessDelta, ' điểm')}</strong></span>
+              <span>• Mệt mỏi: <strong className={fatiguePercentChange >= 0 ? 'text-amber-800 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(fatigueDelta, ' điểm')}</strong></span>
               <span>• Phản xạ: <strong className={reactionSpeedGainPercent >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{reactionSpeedGainPercent >= 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`}</strong></span>
-              <span>• Chú ý: <strong className={attentionPercentChange >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{attentionPercentChange >= 0 ? `+${attentionPercentChange}%` : `${attentionPercentChange}%`}</strong></span>
-              <span>• Trí nhớ: <strong className={memoryPercentChange >= 0 ? 'text-violet-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{memoryPercentChange >= 0 ? `+${memoryPercentChange}%` : `${memoryPercentChange}%`}</strong></span>
+              <span>• Chú ý: <strong className={attentionPercentChange >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(attentionPercentChange, ' điểm %')}</strong></span>
+              <span>• Trí nhớ: <strong className={memoryPercentChange >= 0 ? 'text-violet-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(memoryPercentChange, ' điểm %')}</strong></span>
             </div>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
             <div className="px-5 py-4 bg-white rounded-2xl text-center border-2 border-indigo-200/80 shadow-sm min-w-[200px]">
               <span className="text-[10px] font-bold text-slate-500 block uppercase tracking-wide">
-                Trung bình 5 chỉ số
+                Số lĩnh vực cải thiện
               </span>
-              <div
-                className={`text-2xl sm:text-3xl font-black font-mono tracking-tight mt-1 ${
-                  averageImprovementPercent >= 0 ? 'text-emerald-600' : 'text-rose-600'
-                }`}
-              >
-                {averageImprovementPercent >= 0 ? `Tăng +${averageImprovementPercent}%` : `Giảm -${Math.abs(averageImprovementPercent)}%`}
+              <div className="text-2xl sm:text-3xl font-black font-mono tracking-tight mt-1 text-emerald-700">
+                {improvedIndicatorsCount}/5
+              </div>
+              <div className="text-[10px] text-slate-500 mt-1">
+                Không đổi: {unchangedIndicatorsCount} · Giảm: {declinedIndicatorsCount}
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
+          <h3 className="text-sm font-bold text-slate-900">Cách tính và diễn giải kết quả</h3>
+          <div className="text-xs text-slate-700 space-y-2 leading-relaxed">
+            <p><strong>1. Tỉnh táo:</strong> Điểm sau − điểm trước (thang 1–5). Số dương là tăng tỉnh táo.</p>
+            <p><strong>2. Mức độ khỏe/ít mệt:</strong> Điểm sau − điểm trước (thang 1–5; điểm cao hơn nghĩa là ít mệt hơn).</p>
+            <p><strong>3. Phản xạ:</strong> Thời gian trước − thời gian sau (ms). Tỷ lệ thay đổi = (thời gian trước − thời gian sau) ÷ thời gian trước × 100%. Số dương nghĩa là thời gian phản ứng giảm.</p>
+            <p><strong>4. Chú ý:</strong> Điểm ròng = max(0, (số chữ A đúng − số lần bấm nhầm) ÷ 10 × 100). So sánh điểm ròng sau với trước; đơn vị là điểm phần trăm.</p>
+            <p><strong>5. Trí nhớ:</strong> Tỷ lệ đúng = số chữ số đúng ÷ tổng số chữ số × 100% (3 lượt × 7 số = 21 số). So sánh tỷ lệ sau với trước.</p>
+            <p className="text-slate-500"><strong>Tổng hợp:</strong> Đếm số trong 5 lĩnh vực có kết quả tốt hơn, không lấy trung bình các tỷ lệ khác đơn vị. Đây là so sánh mô tả trong bài khảo sát, không phải chẩn đoán y khoa.</p>
+          </div>
+          <div className="border-t border-slate-100 pt-2 text-xs text-slate-600 space-y-1">
+            <p>Thời điểm bắt đầu: {new Date(session.startedAt || session.createdAt).toLocaleString('vi-VN')}</p>
+            <p>Thời điểm kết thúc: {new Date(session.completedAt || session.createdAt).toLocaleString('vi-VN')}</p>
           </div>
         </div>
 
@@ -779,9 +800,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/60">
                 <span className="text-slate-500">Nhận thức sau ngủ:</span>
-                <strong className={`font-mono font-bold ${averageImprovementPercent >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
-                  {averageImprovementPercent >= 0 ? `Tăng +${averageImprovementPercent}%` : `Giảm -${Math.abs(averageImprovementPercent)}%`}
-                </strong>
+                <strong className="font-mono font-bold text-emerald-700">{improvedIndicatorsCount}/5 chỉ số cải thiện</strong>
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-slate-500">Trí nhớ ngắn hạn sau ngủ:</span>
