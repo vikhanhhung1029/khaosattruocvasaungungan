@@ -4,7 +4,9 @@ export type FatigueLevel = 1 | 2 | 3 | 4 | 5;
 export interface PreNapInfo {
   studentName: string;
   studentId?: string;
-  className: string;
+  className: string; // Selected grade, e.g. "Khối 11"
+  gender?: 'Nam' | 'Nữ';
+  school?: string;
   bedTime: string; // e.g. "23:00"
   wakeTime: string; // e.g. "06:30"
   sleepHours: number; // calculated hours
