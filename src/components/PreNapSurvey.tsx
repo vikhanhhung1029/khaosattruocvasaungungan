@@ -104,22 +104,19 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   const bedTimeId = useId();
   const wakeTimeId = useId();
 
-  // Calculate sleep duration automatically
-  const calculateSleepHours = (bed: string, wake: string): number => {
-    try {
-      const [bH, bM] = bed.split(':').map(Number);
-      const [wH, wM] = wake.split(':').map(Number);
-      let diffMinutes = (wH * 60 + wM) - (bH * 60 + bM);
-      if (diffMinutes <= 0) {
-        diffMinutes += 24 * 60;
-      }
-      return parseFloat((diffMinutes / 60).toFixed(1));
-    } catch {
-      return 7.0;
-    }
+  // Calculate exact overnight sleep duration; the displayed hours are rounded to 1 decimal.
+  const calculateSleepDurationMinutes = (bed: string, wake: string): number => {
+    const timePattern = /^([01]\\d|2[0-3]):([0-5]\\d)$/;
+    if (!timePattern.test(bed) || !timePattern.test(wake) || bed === wake) return 0;
+    const [bH, bM] = bed.split(':').map(Number);
+    const [wH, wM] = wake.split(':').map(Number);
+    let diffMinutes = (wH * 60 + wM) - (bH * 60 + bM);
+    if (diffMinutes < 0) diffMinutes += 24 * 60;
+    return diffMinutes;
   };
 
-  const calculatedSleepHours = calculateSleepHours(bedTime, wakeTime);
+  const calculatedSleepMinutes = calculateSleepDurationMinutes(bedTime, wakeTime);
+  const calculatedSleepHours = Number((calculatedSleepMinutes / 60).toFixed(1));
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Only allow letters (including Vietnamese accents) and spaces
@@ -131,6 +128,10 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanName = studentName.trim();
+    if (calculatedSleepMinutes <= 0) {
+      setErrorMsg('Giờ đi ngủ và giờ thức dậy phải hợp lệ, đồng thời không được trùng nhau.');
+      return;
+    }
     setErrorMsg(null);
     onSubmit(
       {
@@ -309,6 +310,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
                 <input
                   id={bedTimeId}
                   type="time"
+                  required
                   value={bedTime}
                   onChange={(e) => setBedTime(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl border border-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
@@ -319,6 +321,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
                 <input
                   id={wakeTimeId}
                   type="time"
+                  required
                   value={wakeTime}
                   onChange={(e) => setWakeTime(e.target.value)}
                   className="w-full h-11 px-3 rounded-xl border border-slate-200 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
@@ -328,7 +331,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
             <div className="mt-2 text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg flex items-center justify-between">
               <span>Tổng thời lượng ngủ đêm:</span>
               <span className="font-bold text-indigo-600 font-mono tabular-nums">
-                {calculatedSleepHours} giờ ({Math.floor(calculatedSleepHours * 60)} phút)
+                {calculatedSleepHours} giờ ({calculatedSleepMinutes} phút)
               </span>
             </div>
           </div>
