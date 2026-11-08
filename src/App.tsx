@@ -76,6 +76,7 @@ function MainAppContent() {
     alertness: AlertnessLevel,
     fatigue: FatigueLevel
   ) => {
+    setSurveyStartedAt(new Date().toISOString());
     setStudentInfo(info);
     setPreAlertness(alertness);
     setPreFatigue(fatigue);
