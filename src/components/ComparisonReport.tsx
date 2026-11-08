@@ -65,6 +65,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   }, []);
 
   const { studentInfo, preNap, postNap, napDurationMinutes } = session;
+  const moodLabel = studentInfo.preNapMood === 'thoai_mai' ? 'Thoải mái' : studentInfo.preNapMood === 'cang_thang' ? 'Căng thẳng' : studentInfo.preNapMood === 'lo_lang' ? 'Lo lắng' : 'Bình thường';
 
   // 1. Alertness Calculation (Scale 1-5)
   const alertnessDelta = postNap.alertness - preNap.alertness;
@@ -388,10 +389,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             )}
 
             <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 font-medium">
-              Tâm trạng trước ngủ:{' '}
-              {studentInfo.preNapMood === 'thoai_mai' ? 'Thoải mái' :
-               studentInfo.preNapMood === 'cang_thang' ? 'Căng thẳng' :
-               studentInfo.preNapMood === 'lo_lang' ? 'Lo lắng' : 'Bình thường'}
+              Tâm trạng trước ngủ: {moodLabel}
             </span>
           </div>
         </div>
