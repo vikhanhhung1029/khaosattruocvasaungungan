@@ -40,6 +40,26 @@ const SCHOOLS = [
   'Trường THPT Tân Thành',
 ] as const;
 const GENDERS = ['Nam', 'Nữ'] as const;
+const DEVICE_RESPONDENT_ID_KEY = 'nap-survey-device-respondent-id';
+
+function getOrCreateDeviceRespondentId(): string {
+  try {
+    const existing = localStorage.getItem(DEVICE_RESPONDENT_ID_KEY);
+    if (existing) return existing;
+
+    const bytes = new Uint8Array(8);
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      crypto.getRandomValues(bytes);
+    } else {
+      for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+    }
+    const code = `KS-${Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('').toUpperCase()}`;
+    localStorage.setItem(DEVICE_RESPONDENT_ID_KEY, code);
+    return code;
+  } catch {
+    return `KS-${Math.random().toString(16).slice(2, 10).toUpperCase()}`;
+  }
+}
 
 export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   initialInfo,
@@ -48,6 +68,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   onSubmit,
 }) => {
   const [studentName, setStudentName] = useState(initialInfo?.studentName || '');
+  const [deviceRespondentId] = useState<string>(getOrCreateDeviceRespondentId);
   
   const initialGrade = initialInfo?.className?.match(/10|11|12/)?.[0] || '11';
   const [selectedGrade, setSelectedGrade] = useState<string>(initialGrade);
@@ -114,6 +135,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
     onSubmit(
       {
         studentName: cleanName,
+        studentId: deviceRespondentId,
         className: selectedClassName,
         gender: selectedGender,
         school: selectedSchool,
@@ -149,6 +171,14 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
               Vui lòng cung cấp thông tin khách quan về trạng thái của bạn. Sau bước này, bạn sẽ thực hiện 3 bài kiểm tra phản xạ, chú ý chọn lọc (chuẩn 10 chữ A) và trí nhớ ngắn hạn.
             </p>
           </div>
+        </div>
+      </div>
+
+      <div className="max-w-2xl mx-auto -mt-4 px-4">
+        <div className="inline-flex items-center gap-2 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2 text-xs text-indigo-800">
+          <ShieldCheck className="h-3.5 w-3.5" />
+          <span>Mã người thực hiện:</span>
+          <strong className="font-mono tracking-wide">{deviceRespondentId}</strong>
         </div>
       </div>
 
