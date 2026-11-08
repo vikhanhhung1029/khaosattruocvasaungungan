@@ -115,6 +115,14 @@ export async function sendSurveyImmediately(
   const postAttentionTargets = Math.max(1, session.postNap.attentionTest.totalTargetA || 10);
   const preAttentionPercent = Math.min(100, Math.max(0, Math.round(((session.preNap.attentionTest.foundCorrect - session.preNap.attentionTest.errors) / preAttentionTargets) * 100)));
   const postAttentionPercent = Math.min(100, Math.max(0, Math.round(((session.postNap.attentionTest.foundCorrect - session.postNap.attentionTest.errors) / postAttentionTargets) * 100)));
+  const getAverageReactionTime = (trials: number[], fallback: number) => {
+    const validTrials = trials.filter((value) => Number.isFinite(value) && value > 0);
+    return validTrials.length > 0
+      ? Math.round(validTrials.reduce((sum, value) => sum + value, 0) / validTrials.length)
+      : fallback;
+  };
+  const preReactionTime = getAverageReactionTime(session.preNap.reactionTest.trials, session.preNap.reactionTest.averageTime);
+  const postReactionTime = getAverageReactionTime(session.postNap.reactionTest.trials, session.postNap.reactionTest.averageTime);
   const postData = {
     _subject: `[Khảo sát giấc ngủ ngắn] ${student.studentId || 'Chưa có mã'} - ${student.school || student.className}`,
     'Mã người thực hiện (thiết bị/trình duyệt)': student.studentId || 'Chưa có',
