@@ -1,6 +1,6 @@
 import { FullNapSession } from '../types';
 
-export const TARGET_GMAIL = 'vikhanhhung1029@gmail.com';
+export const TARGET_GMAIL = 'khaosatgiacngungan@gmail.com';
 
 function formatElapsedDuration(startValue: string, endValue: string): string {
   const start = new Date(startValue).getTime();
