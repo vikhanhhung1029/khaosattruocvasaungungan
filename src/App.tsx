@@ -87,6 +87,20 @@ function MainAppContent() {
 
   // Final Session Result
   const [finalSession, setFinalSession] = useState<FullNapSession | null>(null);
+  const [emailStatus, setEmailStatus] = useState<'sending' | 'sent' | 'failed' | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+
+  const sendSessionEmail = async (session: FullNapSession) => {
+    setEmailStatus('sending');
+    setEmailError(null);
+    try {
+      await sendSurveyImmediately(session);
+      setEmailStatus('sent');
+    } catch (error) {
+      setEmailStatus('failed');
+      setEmailError(error instanceof Error ? error.message : 'Không xác định được lỗi gửi email.');
+    }
+  };
 
   // Persist each completed assessment step. The active draft stays on this browser/device.
   useEffect(() => {
@@ -234,12 +248,8 @@ function MainAppContent() {
       console.warn('Global survey storage note:', err);
     }
 
-    // Immediately dispatch survey results to owner's Gmail
-    try {
-      await sendSurveyImmediately(session);
-    } catch (e) {
-      console.warn('Proactive email dispatch note:', e);
-    }
+    // Send results and keep the delivery state visible in the report.
+    await sendSessionEmail(session);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -388,6 +398,9 @@ function MainAppContent() {
           <ComparisonReport
             session={finalSession}
             onRestart={handleReset}
+            emailStatus={emailStatus}
+            emailError={emailError}
+            onRetryEmail={() => sendSessionEmail(finalSession)}
           />
         )}
       </main>
