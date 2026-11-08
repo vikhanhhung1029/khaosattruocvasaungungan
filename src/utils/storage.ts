@@ -38,7 +38,9 @@ export function generateSampleSession(): FullNapSession {
     createdAt: new Date().toISOString(),
     studentInfo: {
       studentName: 'Nguyễn Văn An',
-      className: '11A2',
+      className: 'Khối 11',
+      gender: 'Nam',
+      school: 'THPT Chi Lăng',
       bedTime: '23:30',
       wakeTime: '06:30',
       sleepHours: 7.0,
