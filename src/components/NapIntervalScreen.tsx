@@ -14,6 +14,7 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
   const [minutes, setMinutes] = useState<number>(20);
   const [customInput, setCustomInput] = useState<string>('20');
   const [napNotes, setNapNotes] = useState<string>('');
+  const [durationError, setDurationError] = useState<string | null>(null);
 
   // Live Timer states (if student wants to sleep right now with app timer)
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
@@ -64,11 +65,14 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
   const handleCustomChange = (val: string) => {
     setCustomInput(val);
     const parsed = parseInt(val, 10);
-    if (!isNaN(parsed) && parsed > 0 && parsed <= 300) {
+    if (Number.isInteger(parsed) && parsed >= 5 && parsed <= 60) {
+      setDurationError(null);
       setMinutes(parsed);
       if (!isTimerRunning) {
         setTimerSecondsLeft(parsed * 60);
       }
+    } else {
+      setDurationError(val.trim() ? 'Vui lòng nhập số nguyên từ 5 đến 60 phút.' : 'Vui lòng nhập thời lượng ngủ.');
     }
   };
 
@@ -90,8 +94,13 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
   };
 
   const handleProceed = () => {
+    const parsed = Number(customInput);
+    if (!Number.isInteger(parsed) || parsed < 5 || parsed > 60) {
+      setDurationError('Thời lượng phải là số nguyên từ 5 đến 60 phút.');
+      return;
+    }
     stopAlarm();
-    onConfirmNapDuration(minutes, napNotes.trim());
+    onConfirmNapDuration(parsed, napNotes.trim());
   };
 
   const formatTimerDisplay = (totalSec: number) => {
@@ -183,10 +192,12 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
             <div className="relative w-32">
               <input
                 type="number"
-                min="1"
-                max="300"
+                min="5"
+                max="60"
+                step="1"
                 value={customInput}
                 onChange={(e) => handleCustomChange(e.target.value)}
+                aria-invalid={!!durationError}
                 className="w-full h-10 px-3 pr-12 rounded-xl border border-slate-200 text-sm font-mono font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
               />
               <span className="absolute right-3 top-2.5 text-xs text-slate-600 font-semibold">
@@ -194,6 +205,8 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
               </span>
             </div>
           </div>
+          <p className="text-[11px] text-slate-500">Chỉ chấp nhận số nguyên từ 5 đến 60 phút.</p>
+          {durationError && <p role="alert" className="text-xs text-rose-600 font-medium">{durationError}</p>}
         </div>
       </div>
 
