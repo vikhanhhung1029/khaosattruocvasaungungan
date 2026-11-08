@@ -149,14 +149,19 @@ export async function sendSurveyImmediately(
       body: JSON.stringify(postData),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Lỗi gửi email (${response.status})`);
+    const responseData = await response.json().catch(() => ({}));
+    // FormSubmit may return HTTP 200 even when the submission was rejected.
+    // Its AJAX API reports the actual result in the JSON "success" field.
+    if (!response.ok || String(responseData.success) !== 'true') {
+      throw new Error(
+        responseData.message ||
+        `Dịch vụ email từ chối yêu cầu (HTTP ${response.status}).`
+      );
     }
 
     return { success: true, method: 'direct_email' };
   } catch (error) {
-    console.warn('Direct email service notice:', error);
-    return { success: false, method: 'none' };
+    console.error('Direct email delivery failed:', error);
+    throw error instanceof Error ? error : new Error('Không thể gửi email do lỗi mạng hoặc dịch vụ.');
   }
 }
