@@ -72,8 +72,14 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   // Higher score = more energetic / reduced fatigue
   const fatigueDelta = postNap.fatigue - preNap.fatigue;
   // 3. Reaction Time Calculation (Milliseconds - faster reaction time is positive speed gain)
-  const preReactionTime = preNap.reactionTest.averageTime;
-  const postReactionTime = postNap.reactionTest.averageTime;
+  const getAverageReactionTime = (trials: number[], fallback: number) => {
+    const validTrials = trials.filter((value) => Number.isFinite(value) && value > 0);
+    return validTrials.length > 0
+      ? Math.round(validTrials.reduce((sum, value) => sum + value, 0) / validTrials.length)
+      : fallback;
+  };
+  const preReactionTime = getAverageReactionTime(preNap.reactionTest.trials, preNap.reactionTest.averageTime);
+  const postReactionTime = getAverageReactionTime(postNap.reactionTest.trials, postNap.reactionTest.averageTime);
   const reactionTimeSavedMs = preReactionTime - postReactionTime;
   const reactionSpeedGainPercent =
     preReactionTime > 0
@@ -432,7 +438,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             <p><strong>1. Tỉnh táo:</strong> {postNap.alertness} − {preNap.alertness} = <strong>{formatSigned(alertnessDelta, ' điểm')}</strong> (thang 1–5; số dương là tăng tỉnh táo).</p>
             <p><strong>2. Mức độ mệt mỏi:</strong> {postNap.fatigue} − {preNap.fatigue} = <strong>{formatSigned(fatigueDelta, ' điểm')}</strong> (thang 1–5; điểm cao hơn nghĩa là ít mệt hơn).</p>
             <p><strong>3. Phản xạ:</strong> Thời gian trung bình = tổng thời gian các lần bấm hợp lệ ÷ số lần hợp lệ. Trước: {preReactionTime} ms ({preNap.reactionTest.trials.length} lần); sau: {postReactionTime} ms ({postNap.reactionTest.trials.length} lần). Mức rút ngắn = {preReactionTime} − {postReactionTime} = <strong>{formatSigned(reactionTimeSavedMs, ' ms')}</strong>; tỷ lệ giảm thời gian = ({preReactionTime} − {postReactionTime}) ÷ {preReactionTime || 1} × 100 = <strong>{reactionSpeedGainPercent}%</strong>. Bấm sớm: {preNap.reactionTest.faults} → {postNap.reactionTest.faults} lần (ghi riêng, không cộng vào thời gian trung bình).</p>
-            <p><strong>4. Chú ý:</strong> Trước: max(0, ({preAttnCorrect} − {preAttnErrors}) ÷ 10 × 100) = <strong>{preNetAccuracy}%</strong>. Sau: max(0, ({postAttnCorrect} − {postAttnErrors}) ÷ 10 × 100) = <strong>{postNetAccuracy}%</strong>. Chênh lệch = <strong>{formatSigned(attentionAccuracyDelta, ' điểm %')}</strong>.</p>
+            <p><strong>4. Chú ý:</strong> Trước: max(0, ({preAttnCorrect} − {preAttnErrors}) ÷ {preAttentionTargets} × 100) = <strong>{preNetAccuracy}%</strong>. Sau: max(0, ({postAttnCorrect} − {postAttnErrors}) ÷ {postAttentionTargets} × 100) = <strong>{postNetAccuracy}%</strong>. Chênh lệch = <strong>{formatSigned(attentionAccuracyDelta, ' điểm %')}</strong>.</p>
             <p><strong>5. Trí nhớ:</strong> Trước: {preMemoryCorrect}/{preTotalDigits} × 100 = <strong>{preMemoryPercent}%</strong>. Sau: {postMemoryCorrect}/{postTotalDigits} × 100 = <strong>{postMemoryPercent}%</strong>. Chênh lệch = <strong>{formatSigned(memoryPercentDelta, ' điểm %')}</strong>.</p>
             <p className="text-slate-500"><strong>Tổng hợp:</strong> Đếm số trong 5 lĩnh vực có kết quả tốt hơn, không lấy trung bình các tỷ lệ khác đơn vị. Đây là so sánh mô tả trong bài khảo sát, không phải chẩn đoán y khoa.</p>
           </div>
