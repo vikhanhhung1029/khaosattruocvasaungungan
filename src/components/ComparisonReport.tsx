@@ -80,18 +80,20 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   const preAttnErrors = preNap.attentionTest.errors;
   const postAttnErrors = postNap.attentionTest.errors;
 
-  const preNetAccuracy = Math.max(0, Math.round(((preAttnCorrect - preAttnErrors) / 10) * 100));
-  const postNetAccuracy = Math.max(0, Math.round(((postAttnCorrect - postAttnErrors) / 10) * 100));
+  const preAttentionTargets = Math.max(1, preNap.attentionTest.totalTargetA || 10);
+  const postAttentionTargets = Math.max(1, postNap.attentionTest.totalTargetA || 10);
+  const preNetAccuracy = Math.min(100, Math.max(0, Math.round(((preAttnCorrect - preAttnErrors) / preAttentionTargets) * 100)));
+  const postNetAccuracy = Math.min(100, Math.max(0, Math.round(((postAttnCorrect - postAttnErrors) / postAttentionTargets) * 100)));
   const attentionAccuracyDelta = postNetAccuracy - preNetAccuracy;
   const attentionPercentChange = attentionAccuracyDelta;
 
   // 5. Short-term Memory Calculation (3 rounds of 7 simultaneous digits in 7 seconds = 21 digits)
   const preMemoryCorrect = preNap.memoryTest.correctDigitsCount;
   const postMemoryCorrect = postNap.memoryTest.correctDigitsCount;
-  const preTotalDigits = preNap.memoryTest.totalDigits || 21;
-  const postTotalDigits = postNap.memoryTest.totalDigits || 21;
-  const preMemoryPercent = preNap.memoryTest.accuracyPercentage;
-  const postMemoryPercent = postNap.memoryTest.accuracyPercentage;
+  const preTotalDigits = Math.max(1, preNap.memoryTest.totalDigits || 21);
+  const postTotalDigits = Math.max(1, postNap.memoryTest.totalDigits || 21);
+  const preMemoryPercent = Math.min(100, Math.max(0, Math.round((preMemoryCorrect / preTotalDigits) * 100)));
+  const postMemoryPercent = Math.min(100, Math.max(0, Math.round((postMemoryCorrect / postTotalDigits) * 100)));
   const memoryPercentDelta = postMemoryPercent - preMemoryPercent;
   const memoryPercentChange = memoryPercentDelta;
 
@@ -378,7 +380,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           </div>
         </div>
 
-        {/* Highlight Score Summary Banner: Scientific Average Percentage Across All 5 Metrics */}
+        {/* Summary of directional changes across five distinct metrics */}}
         <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-50 via-violet-50 to-emerald-50 border border-indigo-200/80 flex flex-col md:flex-row items-center justify-between gap-5">
           <div className="space-y-1.5 text-center md:text-left flex-1">
             <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-bold text-indigo-950 uppercase tracking-wider">
@@ -393,7 +395,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             <div className="text-[11px] text-slate-600 pt-1 flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1">
               <span>• Tỉnh táo: <strong className={alertnessDelta >= 0 ? 'text-indigo-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(alertnessDelta, ' điểm')}</strong></span>
               <span>• Mệt mỏi: <strong className={fatigueDelta >= 0 ? 'text-amber-800 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(fatigueDelta, ' điểm')}</strong></span>
-              <span>• Phản xạ: <strong className={reactionSpeedGainPercent >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{reactionSpeedGainPercent >= 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`}</strong></span>
+              <span>• Giảm thời gian phản xạ: <strong className={reactionSpeedGainPercent >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(reactionSpeedGainPercent, '%')}</strong></span>
               <span>• Chú ý: <strong className={attentionPercentChange >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(attentionPercentChange, ' điểm %')}</strong></span>
               <span>• Trí nhớ: <strong className={memoryPercentChange >= 0 ? 'text-violet-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(memoryPercentChange, ' điểm %')}</strong></span>
             </div>
@@ -419,7 +421,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           <div className="text-xs text-slate-700 space-y-2 leading-relaxed">
             <p><strong>1. Tỉnh táo:</strong> {postNap.alertness} − {preNap.alertness} = <strong>{formatSigned(alertnessDelta, ' điểm')}</strong> (thang 1–5; số dương là tăng tỉnh táo).</p>
             <p><strong>2. Mức độ mệt mỏi:</strong> {postNap.fatigue} − {preNap.fatigue} = <strong>{formatSigned(fatigueDelta, ' điểm')}</strong> (thang 1–5; điểm cao hơn nghĩa là ít mệt hơn).</p>
-            <p><strong>3. Phản xạ:</strong> Thời gian trung bình = tổng thời gian các lần bấm hợp lệ ÷ số lần hợp lệ. Trước: {preReactionTime} ms ({preNap.reactionTest.trials.length} lần); sau: {postReactionTime} ms ({postNap.reactionTest.trials.length} lần). Mức rút ngắn = {preReactionTime} − {postReactionTime} = <strong>{formatSigned(reactionTimeSavedMs, ' ms')}</strong>; tỷ lệ = ({preReactionTime} − {postReactionTime}) ÷ {preReactionTime || 1} × 100 = <strong>{reactionSpeedGainPercent}%</strong>. Bấm sớm: {preNap.reactionTest.faults} → {postNap.reactionTest.faults} lần (ghi riêng, không cộng vào thời gian trung bình).</p>
+            <p><strong>3. Phản xạ:</strong> Thời gian trung bình = tổng thời gian các lần bấm hợp lệ ÷ số lần hợp lệ. Trước: {preReactionTime} ms ({preNap.reactionTest.trials.length} lần); sau: {postReactionTime} ms ({postNap.reactionTest.trials.length} lần). Mức rút ngắn = {preReactionTime} − {postReactionTime} = <strong>{formatSigned(reactionTimeSavedMs, ' ms')}</strong>; tỷ lệ giảm thời gian = ({preReactionTime} − {postReactionTime}) ÷ {preReactionTime || 1} × 100 = <strong>{reactionSpeedGainPercent}%</strong>. Bấm sớm: {preNap.reactionTest.faults} → {postNap.reactionTest.faults} lần (ghi riêng, không cộng vào thời gian trung bình).</p>
             <p><strong>4. Chú ý:</strong> Trước: max(0, ({preAttnCorrect} − {preAttnErrors}) ÷ 10 × 100) = <strong>{preNetAccuracy}%</strong>. Sau: max(0, ({postAttnCorrect} − {postAttnErrors}) ÷ 10 × 100) = <strong>{postNetAccuracy}%</strong>. Chênh lệch = <strong>{formatSigned(attentionAccuracyDelta, ' điểm %')}</strong>.</p>
             <p><strong>5. Trí nhớ:</strong> Trước: {preMemoryCorrect}/{preTotalDigits} × 100 = <strong>{preMemoryPercent}%</strong>. Sau: {postMemoryCorrect}/{postTotalDigits} × 100 = <strong>{postMemoryPercent}%</strong>. Chênh lệch = <strong>{formatSigned(memoryPercentDelta, ' điểm %')}</strong>.</p>
             <p className="text-slate-500"><strong>Tổng hợp:</strong> Đếm số trong 5 lĩnh vực có kết quả tốt hơn, không lấy trung bình các tỷ lệ khác đơn vị. Đây là so sánh mô tả trong bài khảo sát, không phải chẩn đoán y khoa.</p>
