@@ -37,7 +37,7 @@ const SCHOOLS = [
   'THPT Chi Lăng',
   'THPT Hòa Bình',
   'Phổ thông DTNT THCS & THPT huyện Chi Lăng',
-  'Trường THPT Tân Thành',
+  'THPT Tân Thành',
 ] as const;
 const GENDERS = ['Nam', 'Nữ'] as const;
 const DEVICE_RESPONDENT_ID_KEY = 'nap-survey-device-respondent-id';
