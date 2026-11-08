@@ -117,7 +117,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   );
 
   const handleShare = () => {
-    const text = `Báo cáo đánh giá giấc ngủ ngắn: ${studentInfo.studentName || 'Không ghi tên'} (${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, ngủ ${napDurationMinutes} phút). Chỉ số tổng hợp sau ngủ ngắn: ${averageImprovementPercent >= 0 ? `Tăng +${averageImprovementPercent}%` : `Giảm -${Math.abs(averageImprovementPercent)}%`}. Tốc độ phản xạ: ${reactionSpeedGainPercent > 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`}, mức tỉnh táo: ${postNap.alertness}/5 điểm.`;
+    const text = `Báo cáo đánh giá giấc ngủ ngắn [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.studentName || 'Không ghi tên'} (${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, ngủ ${napDurationMinutes} phút). Chỉ số tổng hợp sau ngủ ngắn: ${averageImprovementPercent >= 0 ? `Tăng +${averageImprovementPercent}%` : `Giảm -${Math.abs(averageImprovementPercent)}%`}. Tốc độ phản xạ: ${reactionSpeedGainPercent > 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`}, mức tỉnh táo: ${postNap.alertness}/5 điểm.`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopyNotice(true);
@@ -331,6 +331,9 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           <div className="flex flex-wrap items-center gap-2 text-xs pt-2">
             <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold">
               Học sinh: {studentInfo.studentName || 'Không ghi tên'}
+            </span>
+            <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono">
+              Mã người thực hiện: {studentInfo.studentId || 'Chưa có mã'}
             </span>
             <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 border border-slate-200 font-bold font-mono">
               {studentInfo.className}
