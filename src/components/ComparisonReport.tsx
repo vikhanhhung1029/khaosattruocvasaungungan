@@ -425,11 +425,11 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
         <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
           <h3 className="text-sm font-bold text-slate-900">Cách tính và diễn giải kết quả</h3>
           <div className="text-xs text-slate-700 space-y-2 leading-relaxed">
-            <p><strong>1. Tỉnh táo:</strong> Điểm sau − điểm trước (thang 1–5). Số dương là tăng tỉnh táo.</p>
-            <p><strong>2. Mức độ khỏe/ít mệt:</strong> Điểm sau − điểm trước (thang 1–5; điểm cao hơn nghĩa là ít mệt hơn).</p>
-            <p><strong>3. Phản xạ:</strong> Thời gian trước − thời gian sau (ms). Tỷ lệ thay đổi = (thời gian trước − thời gian sau) ÷ thời gian trước × 100%. Số dương nghĩa là thời gian phản ứng giảm.</p>
-            <p><strong>4. Chú ý:</strong> Điểm ròng = max(0, (số chữ A đúng − số lần bấm nhầm) ÷ 10 × 100). So sánh điểm ròng sau với trước; đơn vị là điểm phần trăm.</p>
-            <p><strong>5. Trí nhớ:</strong> Tỷ lệ đúng = số chữ số đúng ÷ tổng số chữ số × 100% (3 lượt × 7 số = 21 số). So sánh tỷ lệ sau với trước.</p>
+            <p><strong>1. Tỉnh táo:</strong> {postNap.alertness} − {preNap.alertness} = <strong>{formatSigned(alertnessDelta, ' điểm')}</strong> (thang 1–5; số dương là tăng tỉnh táo).</p>
+            <p><strong>2. Mức độ mệt mỏi:</strong> {postNap.fatigue} − {preNap.fatigue} = <strong>{formatSigned(fatigueDelta, ' điểm')}</strong> (thang 1–5; điểm cao hơn nghĩa là ít mệt hơn).</p>
+            <p><strong>3. Phản xạ:</strong> {preReactionTime} − {postReactionTime} = <strong>{formatSigned(reactionTimeSavedMs, ' ms')}</strong>. Tỷ lệ = ({preReactionTime} − {postReactionTime}) ÷ {preReactionTime || 1} × 100 = <strong>{reactionSpeedGainPercent}%</strong>.</p>
+            <p><strong>4. Chú ý:</strong> Trước: max(0, ({preAttnCorrect} − {preAttnErrors}) ÷ 10 × 100) = <strong>{preNetAccuracy}%</strong>. Sau: max(0, ({postAttnCorrect} − {postAttnErrors}) ÷ 10 × 100) = <strong>{postNetAccuracy}%</strong>. Chênh lệch = <strong>{formatSigned(attentionAccuracyDelta, ' điểm %')}</strong>.</p>
+            <p><strong>5. Trí nhớ:</strong> Trước: {preMemoryCorrect}/{preTotalDigits} × 100 = <strong>{preMemoryPercent}%</strong>. Sau: {postMemoryCorrect}/{postTotalDigits} × 100 = <strong>{postMemoryPercent}%</strong>. Chênh lệch = <strong>{formatSigned(memoryPercentDelta, ' điểm %')}</strong>.</p>
             <p className="text-slate-500"><strong>Tổng hợp:</strong> Đếm số trong 5 lĩnh vực có kết quả tốt hơn, không lấy trung bình các tỷ lệ khác đơn vị. Đây là so sánh mô tả trong bài khảo sát, không phải chẩn đoán y khoa.</p>
           </div>
           <div className="border-t border-slate-100 pt-2 text-xs text-slate-600 space-y-1">
