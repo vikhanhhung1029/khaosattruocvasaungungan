@@ -37,17 +37,11 @@ function formatElapsedDuration(startValue: string, endValue: string): string {
 interface ComparisonReportProps {
   session: FullNapSession;
   onRestart: () => void;
-  emailStatus: 'sending' | 'sent' | 'failed' | null;
-  emailError: string | null;
-  onRetryEmail: () => void;
 }
 
 export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   session,
   onRestart,
-  emailStatus,
-  emailError,
-  onRetryEmail,
 }) => {
   const reportRef = useRef<HTMLDivElement>(null);
   const [copyNotice, setCopyNotice] = useState<boolean>(false);
@@ -305,29 +299,6 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             <span>Làm lại từ đầu</span>
           </button>
         </div>
-      </div>
-
-      <div className={`p-4 rounded-2xl border text-xs space-y-2 ${
-        emailStatus === 'sent' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
-        emailStatus === 'failed' ? 'bg-rose-50 border-rose-200 text-rose-800' :
-        'bg-amber-50 border-amber-200 text-amber-800'
-      }`}>
-        <div className="font-bold">
-          {emailStatus === 'sent' ? 'Đã gửi yêu cầu email thành công đến hộp thư nhận.' :
-           emailStatus === 'sending' ? 'Đang gửi kết quả khảo sát qua email...' :
-           emailStatus === 'failed' ? 'Chưa gửi được email kết quả.' :
-           'Chưa có trạng thái gửi email.'}
-        </div>
-        {emailStatus === 'failed' && (
-          <>
-            <p>{emailError || 'Không nhận được xác nhận từ dịch vụ email.'}</p>
-            <p>Nếu thông báo yêu cầu kích hoạt biểu mẫu, chủ hộp thư cần mở email xác nhận từ FormSubmit và nhấn Activate Form. Sau khi kích hoạt, có thể bấm gửi lại.</p>
-            <button type="button" onClick={onRetryEmail} className="px-3 py-2 rounded-lg bg-rose-700 text-white font-bold hover:bg-rose-800">
-              Thử gửi lại email
-            </button>
-          </>
-        )}
-        {emailStatus === 'sent' && <p>Đích nhận: vikhanhhung1029@gmail.com.</p>}
       </div>
 
       {/* Export status alerts */}
@@ -816,22 +787,8 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                 Bạn Đã Hoàn Thành Khảo Sát!
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                Cảm ơn bạn đã tham gia nghiên cứu khoa học đánh giá hiệu quả giấc ngủ ngắn. Kết quả đã được lưu trên thiết bị; trạng thái gửi email được hiển thị trong báo cáo.
-                <span className="block mt-2 font-semibold">
-                  {emailStatus === 'sent' ? 'Email đã được dịch vụ tiếp nhận.' : emailStatus === 'sending' ? 'Đang gửi email kết quả...' : emailStatus === 'failed' ? `Gửi email chưa thành công: ${emailError || 'Lỗi chưa xác định'}` : 'Đang kiểm tra trạng thái gửi email.'}
-                </span>
-                {emailStatus === 'failed' && <button type="button" onClick={onRetryEmail} className="mt-2 px-3 py-2 rounded-lg bg-rose-700 text-white font-bold">Thử gửi lại email</button>}
+                Cảm ơn bạn đã tham gia nghiên cứu khoa học đánh giá hiệu quả giấc ngủ ngắn. Kết quả khảo sát đã được ghi nhận.
               </p>
-            </div>
-
-            <div className={`rounded-xl p-3 text-left text-xs border ${
-              emailStatus === 'sent' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
-              emailStatus === 'failed' ? 'bg-rose-50 border-rose-200 text-rose-800' :
-              'bg-amber-50 border-amber-200 text-amber-800'
-            }`}>
-              <strong>{emailStatus === 'sent' ? 'Email đã được chấp nhận gửi.' : emailStatus === 'sending' ? 'Đang gửi email kết quả...' : emailStatus === 'failed' ? 'Gửi email thất bại.' : 'Chưa xác định trạng thái email.'}</strong>
-              {emailStatus === 'failed' && <p className="mt-1">{emailError}</p>}
-              {emailStatus === 'failed' && <button type="button" onClick={onRetryEmail} className="mt-2 px-3 py-2 rounded-lg bg-rose-700 text-white font-bold">Thử gửi lại</button>}
             </div>
 
             {/* Quick summary box */}
