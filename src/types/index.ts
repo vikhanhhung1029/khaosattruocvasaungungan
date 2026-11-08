@@ -66,7 +66,9 @@ export interface AssessmentData {
 
 export interface FullNapSession {
   id: string;
-  createdAt: string;
+  createdAt: string; // completion timestamp (legacy field)
+  startedAt?: string; // when the participant submitted the initial survey
+  completedAt?: string; // when all post-nap tests were completed
   studentInfo: PreNapInfo;
   preNap: AssessmentData;
   napDurationMinutes: number;
