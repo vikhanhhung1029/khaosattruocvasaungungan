@@ -24,6 +24,16 @@ import {
   X,
 } from 'lucide-react';
 
+function formatElapsedDuration(startValue: string, endValue: string): string {
+  const start = new Date(startValue).getTime();
+  const end = new Date(endValue).getTime();
+  if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return 'Không xác định';
+  const totalSeconds = Math.floor((end - start) / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return minutes > 0 ? `${minutes} phút ${seconds} giây` : `${seconds} giây`;
+}
+
 interface ComparisonReportProps {
   session: FullNapSession;
   onRestart: () => void;
@@ -117,7 +127,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   const formatSigned = (value: number, suffix = '') => `${value > 0 ? '+' : ''}${value}${suffix}`;
 
   const handleShare = () => {
-    const text = `Báo cáo đánh giá giấc ngủ ngắn [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.studentName || 'Không ghi tên'} (${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, ngủ ${napDurationMinutes} phút). Số chỉ số cải thiện: ${improvedIndicatorsCount}/5; không đổi: ${unchangedIndicatorsCount}/5; giảm: ${declinedIndicatorsCount}/5. Tốc độ phản xạ: ${reactionSpeedGainPercent > 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`}, mức tỉnh táo: ${postNap.alertness}/5 điểm.`;
+    const text = `Báo cáo đánh giá giấc ngủ ngắn [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.studentName || 'Không ghi tên'} (${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, ngủ ${napDurationMinutes} phút). Số chỉ số cải thiện: ${improvedIndicatorsCount}/5; không đổi: ${unchangedIndicatorsCount}/5; giảm: ${declinedIndicatorsCount}/5. Mức giảm thời gian phản xạ: ${formatSigned(reactionSpeedGainPercent, '%')}, mức tỉnh táo: ${postNap.alertness}/5 điểm.`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopyNotice(true);
@@ -429,7 +439,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           <div className="border-t border-slate-100 pt-2 text-xs text-slate-600 space-y-1">
             <p>Thời điểm bắt đầu: {new Date(session.startedAt || session.createdAt).toLocaleString('vi-VN')}</p>
             <p>Thời điểm kết thúc: {new Date(session.completedAt || session.createdAt).toLocaleString('vi-VN')}</p>
-            <p>Tổng thời gian thực hiện: {Math.max(0, Math.round((new Date(session.completedAt || session.createdAt).getTime() - new Date(session.startedAt || session.createdAt).getTime()) / 60000))} phút</p>
+            <p>Tổng thời gian thực hiện: {formatElapsedDuration(session.startedAt || session.createdAt, session.completedAt || session.createdAt)}</p>
           </div>
         </div>
 
