@@ -67,8 +67,8 @@ export const SelectiveAttentionTest: React.FC<SelectiveAttentionTestProps> = ({
 
   const handleFinish = useCallback(() => {
     if (timerRef.current) clearInterval(timerRef.current);
-    const elapsed = Math.min(10, Math.round((performance.now() - startTimeRef.current) / 1000));
-    setTimeSpent(elapsed > 0 ? elapsed : 10);
+    const elapsedSeconds = Math.min(10, Math.max(0.1, (performance.now() - startTimeRef.current) / 1000));
+    setTimeSpent(Number(elapsedSeconds.toFixed(1)));
     setIsFinished(true);
     soundFx.playSuccess();
   }, []);
