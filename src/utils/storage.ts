@@ -70,8 +70,8 @@ export function generateSampleSession(): FullNapSession {
         timeSpentSeconds: 30,
       },
       memoryTest: {
-        targetSequence: '7392158',
-        userSequence: '7392108',
+        targetSequence: '7392158 | 5841963 | 1234567',
+        userSequence: '7392108 | 5841963 | 1234500',
         correctDigitsCount: 18,
         totalDigits: 21,
         accuracyPercentage: 86,
@@ -99,8 +99,8 @@ export function generateSampleSession(): FullNapSession {
         timeSpentSeconds: 21,
       },
       memoryTest: {
-        targetSequence: '5841963',
-        userSequence: '5841963',
+        targetSequence: '7392158 | 5841963 | 1234567',
+        userSequence: '7392158 | 5841963 | 1234567',
         correctDigitsCount: 21,
         totalDigits: 21,
         accuracyPercentage: 100,
