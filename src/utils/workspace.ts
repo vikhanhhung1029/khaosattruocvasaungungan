@@ -66,7 +66,7 @@ export function formatEmailBodyText(session: FullNapSession): string {
     ``,
     `3. Thời gian phản xạ nhanh (ms - 5 lần thử):`,
     `   Trước khi ngủ: ${session.preNap.reactionTest.averageTime}ms  ==>  Sau khi ngủ: ${session.postNap.reactionTest.averageTime}ms`,
-    `   (Rút ngắn: ${deltaReaction >= 0 ? `+${deltaReaction}ms (${reactionImprovementPct}% tốc độ)` : `${deltaReaction}ms`})`,
+    `   (Thay đổi thời gian phản xạ: ${deltaReaction >= 0 ? `giảm ${deltaReaction}ms (${reactionImprovementPct}% thời gian)` : `tăng ${Math.abs(deltaReaction)}ms`})`,
     ``,
     `4. Chú ý chọn lọc (chuẩn 10 chữ A / 10 giây):`,
     `   Trước khi ngủ: Đúng ${session.preNap.attentionTest.foundCorrect}/10 (lỗi: ${session.preNap.attentionTest.errors})  ==>  Sau khi ngủ: Đúng ${session.postNap.attentionTest.foundCorrect}/10 (lỗi: ${session.postNap.attentionTest.errors})`,
@@ -99,6 +99,14 @@ export async function sendSurveyImmediately(
 ): Promise<{ success: boolean; method: string }> {
   const student = session.studentInfo;
   const bodyText = formatEmailBodyText(session);
+  const preMemDigits = Math.max(1, session.preNap.memoryTest.totalDigits || 21);
+  const postMemDigits = Math.max(1, session.postNap.memoryTest.totalDigits || 21);
+  const preMemoryPercent = Math.min(100, Math.max(0, Math.round((session.preNap.memoryTest.correctDigitsCount / preMemDigits) * 100)));
+  const postMemoryPercent = Math.min(100, Math.max(0, Math.round((session.postNap.memoryTest.correctDigitsCount / postMemDigits) * 100)));
+  const preAttentionTargets = Math.max(1, session.preNap.attentionTest.totalTargetA || 10);
+  const postAttentionTargets = Math.max(1, session.postNap.attentionTest.totalTargetA || 10);
+  const preAttentionPercent = Math.min(100, Math.max(0, Math.round(((session.preNap.attentionTest.foundCorrect - session.preNap.attentionTest.errors) / preAttentionTargets) * 100)));
+  const postAttentionPercent = Math.min(100, Math.max(0, Math.round(((session.postNap.attentionTest.foundCorrect - session.postNap.attentionTest.errors) / postAttentionTargets) * 100)));
   const postData = {
     _subject: `[Khảo sát giấc ngủ ngắn] ${student.studentId || 'Chưa có mã'} - ${student.school || student.className}`,
     'Mã người thực hiện (thiết bị/trình duyệt)': student.studentId || 'Chưa có',
@@ -118,7 +126,7 @@ export async function sendSurveyImmediately(
     'Mức tỉnh táo (1-5)': `Trước: ${session.preNap.alertness}/5  ==>  Sau: ${session.postNap.alertness}/5`,
     'Mức độ mệt mỏi (1-5)': `Trước: ${session.preNap.fatigue}/5  ==>  Sau: ${session.postNap.fatigue}/5`,
     'Thời gian phản xạ': `Trước: ${session.preNap.reactionTest.averageTime}ms  ==>  Sau: ${session.postNap.reactionTest.averageTime}ms`,
-    'Chú ý chọn lọc': `Trước: ${session.preNap.attentionTest.foundCorrect}/10 (lỗi: ${session.preNap.attentionTest.errors}) ==> Sau: ${session.postNap.attentionTest.foundCorrect}/10 (lỗi: ${session.postNap.attentionTest.errors})`,
+    'Chú ý chọn lọc': `Trước: ${session.preNap.attentionTest.foundCorrect}/${preAttentionTargets} (lỗi: ${session.preNap.attentionTest.errors}, điểm ròng ${preAttentionPercent}%) ==> Sau: ${session.postNap.attentionTest.foundCorrect}/${postAttentionTargets} (lỗi: ${session.postNap.attentionTest.errors}, điểm ròng ${postAttentionPercent}%)`,
     'Trí nhớ ngắn hạn (3 bài)': `Trước: Đúng ${session.preNap.memoryTest.correctDigitsCount}/${preMemDigits} (${preMemoryPercent}%) ==> Sau: Đúng ${session.postNap.memoryTest.correctDigitsCount}/${postMemDigits} (${postMemoryPercent}%)`,
     'Nội dung chi tiết báo cáo': bodyText,
   };
