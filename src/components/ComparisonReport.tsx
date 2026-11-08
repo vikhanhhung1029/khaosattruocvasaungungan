@@ -549,7 +549,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                     }`}
                   >
                     ({reactionTimeSavedMs >= 0 ? `Rút ngắn ${reactionTimeSavedMs}ms` : `Chậm hơn ${Math.abs(reactionTimeSavedMs)}ms`} ·{' '}
-                    {reactionSpeedGainPercent >= 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`} tốc độ)
+                    {formatSigned(reactionSpeedGainPercent, '%')} giảm thời gian)
                   </span>
                 </span>
               </div>
@@ -689,9 +689,9 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
               • <strong>Thời lượng ngủ ngắn ({napDurationMinutes} phút):</strong>{' '}
               {napDurationMinutes <= 20
                 ? 'Thời lượng 15-20 phút đạt hiệu quả tối ưu theo mô hình Power Nap. Giai đoạn này giúp dọn sạch phân tử Adenosine tích tụ ở synap thần kinh mà chưa kích hoạt giấc ngủ sóng chậm (Slow-Wave Sleep), giúp loại bỏ sự uể oải và cải thiện phản xạ ngay lập tức.'
-                : napDurationMinutes <= 35
-                ? 'Thời lượng 25-30 phút hỗ trợ phục hồi trương lực cơ và hệ thần kinh giao cảm. Tốc độ xử lý thông tin được cải thiện rõ rệt.'
-                : 'Giấc ngủ kéo dài hơn 35 phút có thể kích hoạt hiện tượng quán tính giấc ngủ (Sleep Inertia) trong 10-15 phút đầu, sau đó chuyển sang hỗ trợ củng cố trí nhớ dài hạn.'}
+                : napDurationMinutes <= 30
+                ? 'Thời lượng 21-30 phút có thể hỗ trợ giảm mệt mỏi; phản ứng sau khi thức dậy có thể khác nhau giữa từng người.'
+                : 'Giấc ngủ trên 30 phút có thể làm tăng khả năng thức dậy trong trạng thái uể oải ở một số người; phản ứng thực tế cần được đánh giá qua kết quả đo.'}
             </p>
             <p>
               • <strong>Tương quan giấc ngủ ban đêm ({studentInfo.sleepHours} giờ):</strong>{' '}
