@@ -58,17 +58,9 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
 
   // 1. Alertness Calculation (Scale 1-5)
   const alertnessDelta = postNap.alertness - preNap.alertness;
-  const alertnessPercentChange = Math.round(
-    ((postNap.alertness - preNap.alertness) / (preNap.alertness || 1)) * 100
-  );
-
   // 2. Fatigue Level Calculation (Scale 1-5: 1=Rất mệt, 2=Mệt mỏi, 3=Bình thường, 4=Ít mệt, 5=Hoàn toàn khỏe)
   // Higher score = more energetic / reduced fatigue
   const fatigueDelta = postNap.fatigue - preNap.fatigue;
-  const fatiguePercentChange = Math.round(
-    ((postNap.fatigue - preNap.fatigue) / (preNap.fatigue || 1)) * 100
-  );
-
   // 3. Reaction Time Calculation (Milliseconds - faster reaction time is positive speed gain)
   const preReactionTime = preNap.reactionTest.averageTime;
   const postReactionTime = postNap.reactionTest.averageTime;
@@ -391,7 +383,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           <div className="space-y-1.5 text-center md:text-left flex-1">
             <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-bold text-indigo-950 uppercase tracking-wider">
               <TrendingUp className="w-4 h-4 text-indigo-600" />
-              <span>Chỉ số tổng hợp sau ngủ ngắn</span>
+              <span>Tổng quan thay đổi 5 lĩnh vực</span>
             </div>
             <p className="text-xs text-slate-600 max-w-lg leading-relaxed">
               Không gộp thành một tỷ lệ phần trăm vì các bài đo dùng thang điểm và đơn vị khác nhau. Báo cáo đếm số lĩnh vực cải thiện, không đổi hoặc giảm.
@@ -399,8 +391,8 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
 
             {/* Individual Breakdown */}
             <div className="text-[11px] text-slate-600 pt-1 flex flex-wrap items-center justify-center md:justify-start gap-x-3 gap-y-1">
-              <span>• Tỉnh táo: <strong className={alertnessPercentChange >= 0 ? 'text-indigo-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(alertnessDelta, ' điểm')}</strong></span>
-              <span>• Mệt mỏi: <strong className={fatiguePercentChange >= 0 ? 'text-amber-800 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(fatigueDelta, ' điểm')}</strong></span>
+              <span>• Tỉnh táo: <strong className={alertnessDelta >= 0 ? 'text-indigo-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(alertnessDelta, ' điểm')}</strong></span>
+              <span>• Mệt mỏi: <strong className={fatigueDelta >= 0 ? 'text-amber-800 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(fatigueDelta, ' điểm')}</strong></span>
               <span>• Phản xạ: <strong className={reactionSpeedGainPercent >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{reactionSpeedGainPercent >= 0 ? `+${reactionSpeedGainPercent}%` : `${reactionSpeedGainPercent}%`}</strong></span>
               <span>• Chú ý: <strong className={attentionPercentChange >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(attentionPercentChange, ' điểm %')}</strong></span>
               <span>• Trí nhớ: <strong className={memoryPercentChange >= 0 ? 'text-violet-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(memoryPercentChange, ' điểm %')}</strong></span>
@@ -472,8 +464,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                       alertnessDelta >= 0 ? 'text-emerald-700' : 'text-rose-600'
                     }`}
                   >
-                    ({alertnessDelta >= 0 ? `+${alertnessDelta}` : alertnessDelta} điểm ·{' '}
-                    {alertnessPercentChange >= 0 ? `+${alertnessPercentChange}%` : `${alertnessPercentChange}%`})
+                    ({alertnessDelta >= 0 ? `+${alertnessDelta}` : alertnessDelta} điểm)
                   </span>
                 </span>
               </div>
@@ -509,8 +500,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                       fatigueDelta >= 0 ? 'text-emerald-700' : 'text-rose-600'
                     }`}
                   >
-                    ({fatigueDelta >= 0 ? `+${fatigueDelta}` : fatigueDelta} điểm ·{' '}
-                    {fatiguePercentChange >= 0 ? `+${fatiguePercentChange}%` : `${fatiguePercentChange}%`})
+                    ({fatigueDelta >= 0 ? `+${fatigueDelta}` : fatigueDelta} điểm)
                   </span>
                 </span>
               </div>
