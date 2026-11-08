@@ -74,17 +74,6 @@ export interface FullNapSession {
   submitterEmail?: string;
 }
 
-export type SystemRole = 'owner' | 'viewer' | 'student';
-
-export interface AuthorizedViewer {
-  email: string;
-  role: 'viewer' | 'admin';
-  notes?: string;
-  grantedBy: string;
-  grantedAt: string;
-  active: boolean;
-}
-
 export type SurveyPhase =
   | 'pre_survey' // Step 1: background & pre-nap alertness/fatigue
   | 'pre_reaction' // Step 2: Reaction test

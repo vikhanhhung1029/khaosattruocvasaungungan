@@ -24,7 +24,6 @@ import { MemoryTest } from './components/MemoryTest';
 import { NapIntervalScreen } from './components/NapIntervalScreen';
 import { PostNapSurvey } from './components/PostNapSurvey';
 import { ComparisonReport } from './components/ComparisonReport';
-import { AuthProvider } from './context/AuthContext';
 import { saveNapSession } from './utils/storage';
 import { saveSurveyToGlobal } from './firebase';
 import { sendSurveyImmediately } from './utils/workspace';
@@ -350,9 +349,5 @@ function MainAppContent() {
 }
 
 export default function App() {
-  return (
-    <AuthProvider>
-      <MainAppContent />
-    </AuthProvider>
-  );
+  return <MainAppContent />;
 }
