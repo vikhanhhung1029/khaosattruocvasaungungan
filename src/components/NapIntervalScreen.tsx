@@ -55,6 +55,7 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
   };
 
   const handleSelectPreset = (m: number) => {
+    setDurationError(null);
     setMinutes(m);
     setCustomInput(String(m));
     if (!isTimerRunning) {
