@@ -19,6 +19,7 @@ export function formatEmailBodyText(session: FullNapSession): string {
     `======================================================`,
     `Thời gian thực hiện: ${new Date(session.createdAt).toLocaleString('vi-VN')}`,
     `Mã phiên: ${session.id}`,
+    `Mã người thực hiện (thiết bị/trình duyệt): ${student.studentId || 'Chưa có'}`,
     ``,
     `I. THÔNG TIN HỌC SINH & ĐIỀU KIỆN SINH HOẠT:`,
     `- Họ và tên: ${student.studentName || 'Không cung cấp'}`,
@@ -72,7 +73,8 @@ export async function sendSurveyImmediately(
   const student = session.studentInfo;
   const bodyText = formatEmailBodyText(session);
   const postData = {
-    _subject: `[Khảo sát giấc ngủ ngắn] Kết quả: ${student.studentName || 'Không ghi tên'} - ${student.school || student.className}`,
+    _subject: `[Khảo sát giấc ngủ ngắn] ${student.studentId || 'Chưa có mã'} - ${student.school || student.className}`,
+    'Mã người thực hiện (thiết bị/trình duyệt)': student.studentId || 'Chưa có',
     _template: 'table',
     _captcha: 'false',
     'Họ và tên học sinh': student.studentName || 'Không cung cấp',
