@@ -327,7 +327,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             </button>
           </>
         )}
-        {emailStatus === 'sent' && <p>Đích nhận: ${TARGET_GMAIL}.</p>}
+        {emailStatus === 'sent' && <p>Đích nhận: vikhanhhung1029@gmail.com.</p>}
       </div>
 
       {/* Export status alerts */}
@@ -817,6 +817,10 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
                 Cảm ơn bạn đã tham gia nghiên cứu khoa học đánh giá hiệu quả giấc ngủ ngắn. Kết quả đã được lưu trên thiết bị; trạng thái gửi email được hiển thị trong báo cáo.
+                <span className="block mt-2 font-semibold">
+                  {emailStatus === 'sent' ? 'Email đã được dịch vụ tiếp nhận.' : emailStatus === 'sending' ? 'Đang gửi email kết quả...' : emailStatus === 'failed' ? `Gửi email chưa thành công: ${emailError || 'Lỗi chưa xác định'}` : 'Đang kiểm tra trạng thái gửi email.'}
+                </span>
+                {emailStatus === 'failed' && <button type="button" onClick={onRetryEmail} className="mt-2 px-3 py-2 rounded-lg bg-rose-700 text-white font-bold">Thử gửi lại email</button>}
               </p>
             </div>
 
