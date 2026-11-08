@@ -99,6 +99,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                         </span>
                       </div>
                       <div className="text-[11px] text-slate-600 flex items-center gap-2 mt-0.5">
+                        <span className="font-mono">Mã: {session.studentInfo.studentId || 'Chưa có'}</span>
+                        <span>·</span>
                         <span>{dateStr}</span>
                         <span>·</span>
                         <span
