@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   SurveyPhase,
   PreNapInfo,
@@ -29,15 +29,33 @@ import { saveSurveyToGlobal } from './firebase';
 import { sendSurveyImmediately } from './utils/workspace';
 import { soundFx } from './utils/sound';
 
+const DRAFT_STORAGE_KEY = 'nap_study_active_draft_v1';
+
+function readSurveyDraft(): any | null {
+  try {
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    const validPhases: SurveyPhase[] = [
+      'pre_reaction', 'pre_attention', 'pre_memory', 'nap_interval',
+      'post_survey', 'post_reaction', 'post_attention', 'post_memory',
+    ];
+    return parsed && validPhases.includes(parsed.phase) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 function MainAppContent() {
+  const [initialDraft] = useState<any | null>(() => readSurveyDraft());
   // Current survey phase
-  const [phase, setPhase] = useState<SurveyPhase>('pre_survey');
+  const [phase, setPhase] = useState<SurveyPhase>(initialDraft?.phase || 'pre_survey');
   const [surveyKey, setSurveyKey] = useState<number>(0);
-  const [surveyStartedAt, setSurveyStartedAt] = useState<string>(() => new Date().toISOString());
-  const [preAssessmentCompletedAt, setPreAssessmentCompletedAt] = useState<string | null>(null);
+  const [surveyStartedAt, setSurveyStartedAt] = useState<string>(() => initialDraft?.surveyStartedAt || new Date().toISOString());
+  const [preAssessmentCompletedAt, setPreAssessmentCompletedAt] = useState<string | null>(initialDraft?.preAssessmentCompletedAt || null);
 
   // Pre-nap survey & tests state
-  const [studentInfo, setStudentInfo] = useState<PreNapInfo>({
+  const [studentInfo, setStudentInfo] = useState<PreNapInfo>(initialDraft?.studentInfo || { 
     studentName: '',
     className: 'Khối 11',
     gender: 'Nam',
@@ -50,25 +68,48 @@ function MainAppContent() {
     hadCaffeine: false,
     preNapMood: 'binh_thuong',
   });
-  const [preAlertness, setPreAlertness] = useState<AlertnessLevel>(2);
-  const [preFatigue, setPreFatigue] = useState<FatigueLevel>(2);
-  const [preReaction, setPreReaction] = useState<ReactionTestResult | null>(null);
-  const [preAttention, setPreAttention] = useState<SelectiveAttentionResult | null>(null);
-  const [preMemory, setPreMemory] = useState<MemoryTestResult | null>(null);
+  const [preAlertness, setPreAlertness] = useState<AlertnessLevel>(initialDraft?.preAlertness ?? 2);
+  const [preFatigue, setPreFatigue] = useState<FatigueLevel>(initialDraft?.preFatigue ?? 2);
+  const [preReaction, setPreReaction] = useState<ReactionTestResult | null>(initialDraft?.preReaction || null);
+  const [preAttention, setPreAttention] = useState<SelectiveAttentionResult | null>(initialDraft?.preAttention || null);
+  const [preMemory, setPreMemory] = useState<MemoryTestResult | null>(initialDraft?.preMemory || null);
 
   // Nap interval state
-  const [napMinutes, setNapMinutes] = useState<number>(20);
-  const [napNotes, setNapNotes] = useState<string>('');
+  const [napMinutes, setNapMinutes] = useState<number>(initialDraft?.napMinutes ?? 20);
+  const [napNotes, setNapNotes] = useState<string>(initialDraft?.napNotes || '');
 
   // Post-nap survey & tests state
-  const [postAlertness, setPostAlertness] = useState<AlertnessLevel>(4);
-  const [postFatigue, setPostFatigue] = useState<FatigueLevel>(4);
-  const [postReaction, setPostReaction] = useState<ReactionTestResult | null>(null);
-  const [postAttention, setPostAttention] = useState<SelectiveAttentionResult | null>(null);
-  const [postMemory, setPostMemory] = useState<MemoryTestResult | null>(null);
+  const [postAlertness, setPostAlertness] = useState<AlertnessLevel>(initialDraft?.postAlertness ?? 4);
+  const [postFatigue, setPostFatigue] = useState<FatigueLevel>(initialDraft?.postFatigue ?? 4);
+  const [postReaction, setPostReaction] = useState<ReactionTestResult | null>(initialDraft?.postReaction || null);
+  const [postAttention, setPostAttention] = useState<SelectiveAttentionResult | null>(initialDraft?.postAttention || null);
+  const [postMemory, setPostMemory] = useState<MemoryTestResult | null>(initialDraft?.postMemory || null);
 
   // Final Session Result
   const [finalSession, setFinalSession] = useState<FullNapSession | null>(null);
+
+  // Persist each completed assessment step. The active draft stays on this browser/device.
+  useEffect(() => {
+    if (phase === 'pre_survey' || phase === 'report') {
+      if (phase === 'report') localStorage.removeItem(DRAFT_STORAGE_KEY);
+      return;
+    }
+    try {
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({
+        phase, surveyStartedAt, preAssessmentCompletedAt, studentInfo,
+        preAlertness, preFatigue, preReaction, preAttention, preMemory,
+        napMinutes, napNotes, postAlertness, postFatigue, postReaction,
+        postAttention, postMemory,
+      }));
+    } catch (error) {
+      console.error('Không thể lưu tiến độ khảo sát trên thiết bị:', error);
+    }
+  }, [
+    phase, surveyStartedAt, preAssessmentCompletedAt, studentInfo,
+    preAlertness, preFatigue, preReaction, preAttention, preMemory,
+    napMinutes, napNotes, postAlertness, postFatigue, postReaction,
+    postAttention, postMemory,
+  ]);
 
   // Handle Step 1: Pre-nap Survey
   const handlePreSurveySubmit = (
@@ -205,6 +246,7 @@ function MainAppContent() {
 
   // Reset to initial state: completely clears all student inputs and restarts from phase 1
   const handleReset = () => {
+    localStorage.removeItem(DRAFT_STORAGE_KEY);
     try {
       soundFx.stopAlarmLoop();
     } catch {
