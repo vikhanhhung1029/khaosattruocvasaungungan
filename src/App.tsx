@@ -33,7 +33,7 @@ function MainAppContent() {
   // Current survey phase
   const [phase, setPhase] = useState<SurveyPhase>('pre_survey');
   const [surveyKey, setSurveyKey] = useState<number>(0);
-  const [surveyStartedAt, setSurveyStartedAt] = useState<string | null>(null);
+  const [surveyStartedAt, setSurveyStartedAt] = useState<string>(() => new Date().toISOString());
   const [preAssessmentCompletedAt, setPreAssessmentCompletedAt] = useState<string | null>(null);
 
   // Pre-nap survey & tests state
@@ -76,7 +76,6 @@ function MainAppContent() {
     alertness: AlertnessLevel,
     fatigue: FatigueLevel
   ) => {
-    setSurveyStartedAt(new Date().toISOString());
     setStudentInfo(info);
     setPreAlertness(alertness);
     setPreFatigue(fatigue);
@@ -179,7 +178,7 @@ function MainAppContent() {
     const session: FullNapSession = {
       id: 'session_' + Date.now(),
       createdAt: completedAt,
-      startedAt: surveyStartedAt || completedAt,
+      startedAt: surveyStartedAt,
       completedAt,
       studentInfo,
       preNap: preData,
@@ -219,7 +218,7 @@ function MainAppContent() {
       // ignore
     }
 
-    setSurveyStartedAt(null);
+    setSurveyStartedAt(new Date().toISOString());
     setPreAssessmentCompletedAt(null);
     setStudentInfo({
       studentName: '',
