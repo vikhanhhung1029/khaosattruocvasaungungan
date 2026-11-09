@@ -4,9 +4,9 @@ import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  // GitHub Pages project site: https://<user>.github.io/<repository>/
-  // Vite rewrites the entry script and all built assets using this base path.
-  base: '/khaosattruocvasaungungan/',
+  // Relative asset paths work on both the GitHub Pages project URL
+  // and a custom domain served from the site root.
+  base: './',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
