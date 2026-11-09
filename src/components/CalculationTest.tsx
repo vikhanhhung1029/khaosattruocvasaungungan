@@ -70,6 +70,10 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     const nextItems = [...items, item];
     setItems(nextItems);
     setFeedback(item);
+    if (index === 2 && timerRef.current !== null) {
+      window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     setAnswer('');
     setStage('feedback');
   };
