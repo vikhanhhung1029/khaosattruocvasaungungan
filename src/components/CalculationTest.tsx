@@ -52,7 +52,7 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (!/^\\d{1,5}$/.test(answer.trim()) || stage !== 'answer') return;
+    if (!/^\d{1,5}$/.test(answer.trim()) || stage !== 'answer') return;
     const parsed = Number(answer);
     if (startedAtRef.current !== null) {
       accumulatedMsRef.current += Math.max(0, performance.now() - startedAtRef.current);
@@ -70,11 +70,6 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     const nextItems = [...items, item];
     setItems(nextItems);
     setFeedback(item);
-    if (index === 2 && startedAtRef.current !== null) {
-      setElapsedMs(finalElapsedRef.current);
-      if (timerRef.current !== null) window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
     setAnswer('');
     setStage('feedback');
   };
@@ -107,7 +102,6 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     setItems([]);
     setAnswer('');
     setElapsedMs(0);
-    finalElapsedRef.current = 0;
     accumulatedMsRef.current = 0;
     startedAtRef.current = null;
   };
@@ -153,9 +147,9 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
           </div>
           <label className="block max-w-xs mx-auto">
             <span className="block text-xs font-semibold text-slate-600 mb-2">Đáp án của bạn</span>
-            <input autoFocus inputMode="numeric" pattern="[0-9]*" value={answer} onChange={e => setAnswer(e.target.value.replace(/\\D/g, '').slice(0, 5))} className="w-full h-14 rounded-xl border-2 border-slate-200 focus:border-amber-500 outline-none text-center text-2xl font-mono font-bold" placeholder="Nhập kết quả" />
+            <input autoFocus inputMode="numeric" pattern="[0-9]*" value={answer} onChange={e => setAnswer(e.target.value.replace(/\D/g, '').slice(0, 5))} className="w-full h-14 rounded-xl border-2 border-slate-200 focus:border-amber-500 outline-none text-center text-2xl font-mono font-bold" placeholder="Nhập kết quả" />
           </label>
-          <button type="submit" disabled={!/^\\d{1,5}$/.test(answer.trim())} className="w-full h-12 rounded-xl bg-amber-600 disabled:opacity-40 text-white font-bold">Xác nhận đáp án</button>
+          <button type="submit" disabled={!/^\d{1,5}$/.test(answer.trim())} className="w-full h-12 rounded-xl bg-amber-600 disabled:opacity-40 text-white font-bold">Xác nhận đáp án</button>
         </form>
       )}
 
