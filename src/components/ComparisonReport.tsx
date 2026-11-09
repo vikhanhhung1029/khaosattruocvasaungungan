@@ -151,7 +151,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   const formatSigned = (value: number, suffix = '') => `${value > 0 ? '+' : ''}${value}${suffix}`;
 
   const handleShare = () => {
-    const text = `Báo cáo khảo sát [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, thời lượng ngủ ngắn ${napDurationMinutes} phút. Lĩnh vực cải thiện: ${improvedIndicatorsCount}/6; không đổi: ${unchangedIndicatorsCount}/5; giảm: ${declinedIndicatorsCount}/5.`;
+    const text = `Báo cáo khảo sát [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, thời lượng ngủ ngắn ${napDurationMinutes} phút. Lĩnh vực cải thiện: ${improvedIndicatorsCount}/6; không đổi: ${unchangedIndicatorsCount}/6; giảm: ${declinedIndicatorsCount}/6.`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopyNotice(true);
@@ -848,7 +848,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/60">
                 <span className="text-slate-500">Nhận thức sau ngủ:</span>
-                <strong className="font-mono font-bold text-emerald-700">{improvedIndicatorsCount}/5 chỉ số cải thiện</strong>
+                <strong className="font-mono font-bold text-emerald-700">{improvedIndicatorsCount}/6 chỉ số cải thiện</strong>
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-slate-500">Trí nhớ ngắn hạn sau ngủ:</span>
