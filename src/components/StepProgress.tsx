@@ -10,8 +10,8 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentPhase }) => {
     {
       id: 'pre',
       title: 'Trước khi ngủ',
-      sub: 'Khảo sát & 3 bài test',
-      phases: ['pre_survey', 'pre_reaction', 'pre_attention', 'pre_memory'],
+      sub: 'Khảo sát & 4 bài test',
+      phases: ['pre_survey', 'pre_reaction', 'pre_attention', 'pre_memory', 'pre_calculation'],
     },
     {
       id: 'nap',
@@ -22,8 +22,8 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentPhase }) => {
     {
       id: 'post',
       title: 'Sau khi ngủ',
-      sub: 'Đánh giá lại',
-      phases: ['post_survey', 'post_reaction', 'post_attention', 'post_memory'],
+      sub: 'Đánh giá lại & 4 bài test',
+      phases: ['post_survey', 'post_reaction', 'post_attention', 'post_memory', 'post_calculation'],
     },
     {
       id: 'report',
@@ -37,15 +37,17 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentPhase }) => {
 
   // Determine sub-step for current phase
   let subStepLabel = '';
-  if (currentPhase === 'pre_survey') subStepLabel = 'Bước 1/4: Bảng khảo sát & thông tin ban đầu';
-  else if (currentPhase === 'pre_reaction') subStepLabel = 'Bước 2/4: Bài kiểm tra phản ứng nhanh';
-  else if (currentPhase === 'pre_attention') subStepLabel = 'Bước 3/4: Bài kiểm tra chú ý 10 chữ A (10s)';
-  else if (currentPhase === 'pre_memory') subStepLabel = 'Bước 4/4: Bài kiểm tra trí nhớ ngắn hạn (7 số / 7s)';
+  if (currentPhase === 'pre_survey') subStepLabel = 'Bước 1/5: Bảng khảo sát & thông tin ban đầu';
+  else if (currentPhase === 'pre_reaction') subStepLabel = 'Bước 2/5: Bài kiểm tra phản ứng nhanh';
+  else if (currentPhase === 'pre_attention') subStepLabel = 'Bước 3/5: Bài kiểm tra chú ý 10 chữ A (10s)';
+  else if (currentPhase === 'pre_memory') subStepLabel = 'Bước 4/5: Bài kiểm tra trí nhớ ngắn hạn (7 số / 7s)';
+  else if (currentPhase === 'pre_calculation') subStepLabel = 'Bước 5/5: Tính toán 3 phép nhân hai chữ số';
   else if (currentPhase === 'nap_interval') subStepLabel = 'Nhập số phút đã ngủ hoặc bấm hẹn giờ ngủ';
-  else if (currentPhase === 'post_survey') subStepLabel = 'Bước 1/4: Đánh giá tỉnh táo & mệt mỏi sau ngủ';
-  else if (currentPhase === 'post_reaction') subStepLabel = 'Bước 2/4: Kiểm tra phản ứng nhanh sau ngủ';
-  else if (currentPhase === 'post_attention') subStepLabel = 'Bước 3/4: Kiểm tra chú ý 10 chữ A (10s) sau ngủ';
-  else if (currentPhase === 'post_memory') subStepLabel = 'Bước 4/4: Kiểm tra trí nhớ ngắn hạn (7 số / 7s) sau ngủ';
+  else if (currentPhase === 'post_survey') subStepLabel = 'Bước 1/5: Đánh giá tỉnh táo & mệt mỏi sau ngủ';
+  else if (currentPhase === 'post_reaction') subStepLabel = 'Bước 2/5: Kiểm tra phản ứng nhanh sau ngủ';
+  else if (currentPhase === 'post_attention') subStepLabel = 'Bước 3/5: Kiểm tra chú ý 10 chữ A (10s) sau ngủ';
+  else if (currentPhase === 'post_memory') subStepLabel = 'Bước 4/5: Kiểm tra trí nhớ ngắn hạn (7 số / 7s) sau ngủ';
+  else if (currentPhase === 'post_calculation') subStepLabel = 'Bước 5/5: Tính toán 3 phép nhân hai chữ số sau ngủ';
   else if (currentPhase === 'report') subStepLabel = 'Hoàn tất: Báo cáo phân tích so sánh & xuất PNG / PDF';
 
   const progressByPhase: Record<SurveyPhase, number> = {
@@ -53,11 +55,13 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentPhase }) => {
     pre_reaction: 20,
     pre_attention: 30,
     pre_memory: 40,
+    pre_calculation: 45,
     nap_interval: 50,
     post_survey: 60,
     post_reaction: 70,
     post_attention: 80,
-    post_memory: 90,
+    post_memory: 85,
+    post_calculation: 90,
     report: 100,
   };
 
