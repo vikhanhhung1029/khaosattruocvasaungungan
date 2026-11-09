@@ -37,7 +37,7 @@ export function generateSampleSession(): FullNapSession {
     id: 'demo_' + Date.now(),
     createdAt: new Date().toISOString(),
     studentInfo: {
-      studentName: 'Nguyễn Văn An',
+      studentId: 'KS-DEMO0000000001',
       className: 'Khối 11',
       gender: 'Nam',
       school: 'THPT Chi Lăng',
@@ -67,7 +67,7 @@ export function generateSampleSession(): FullNapSession {
         errors: 2,
         missed: 3,
         accuracyPercentage: 50, // Net accuracy: (7 - 2) / 10 = 50%
-        timeSpentSeconds: 30,
+        timeSpentSeconds: 10,
       },
       memoryTest: {
         targetSequence: '7392158 | 5841963 | 1234567',
@@ -96,7 +96,7 @@ export function generateSampleSession(): FullNapSession {
         errors: 0,
         missed: 0,
         accuracyPercentage: 100, // Net accuracy: (10 - 0) / 10 = 100%
-        timeSpentSeconds: 21,
+        timeSpentSeconds: 10,
       },
       memoryTest: {
         targetSequence: '7392158 | 5841963 | 1234567',
