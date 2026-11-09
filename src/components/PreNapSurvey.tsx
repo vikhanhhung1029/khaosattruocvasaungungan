@@ -71,6 +71,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   
   const initialGrade = initialInfo?.className?.match(/10|11|12/)?.[0] || '11';
   const [selectedGrade, setSelectedGrade] = useState<string>(initialGrade);
+  const [studentName, setStudentName] = useState<string>(initialInfo?.studentName || '');
   const [selectedGender, setSelectedGender] = useState<'Nam' | 'Nữ'>(initialInfo?.gender || 'Nam');
   const [selectedSchool, setSelectedSchool] = useState<string>(
     initialInfo?.school && SCHOOLS.includes(initialInfo.school as typeof SCHOOLS[number])
@@ -126,6 +127,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
     onSubmit(
       {
         studentId: deviceRespondentId,
+        studentName: studentName.trim(),
         className: selectedClassName,
         gender: selectedGender,
         school: selectedSchool,
@@ -193,11 +195,28 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
         <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2.5 text-xs text-slate-600">
           <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
           <div className="leading-relaxed">
-            <strong className="text-slate-900 font-semibold">Thông tin về dữ liệu khảo sát:</strong> Khảo sát không yêu cầu họ tên. Mỗi trình duyệt được cấp một mã người thực hiện riêng để phân biệt các lần tham gia. Dữ liệu được lưu trên Firebase và gửi đến email quản trị qua dịch vụ email tự động; chỉ tài khoản quản trị được cấp quyền mới có thể xem dữ liệu trong bảng quản trị. Vui lòng không nhập thông tin riêng tư không cần thiết.
+            <strong className="text-slate-900 font-semibold">Thông tin về dữ liệu khảo sát:</strong> Bạn có thể nhập họ tên nếu muốn; mục này không bắt buộc và có thể để trống. Mỗi trình duyệt vẫn được cấp một mã người thực hiện riêng để phân biệt các lần tham gia. Dữ liệu được lưu trên Firebase và gửi đến email quản trị qua dịch vụ email tự động; chỉ tài khoản quản trị được cấp quyền mới có thể xem dữ liệu trong bảng quản trị. Vui lòng không nhập thông tin riêng tư không cần thiết.
           </div>
         </div>
 
-        <div className="space-y-4 pt-1">{/* Thông tin trường, khối và giới tính */}
+        <div className="space-y-4 pt-1">
+          <div>
+            <label htmlFor="student-name" className="block text-xs font-semibold text-slate-700 mb-1.5">
+              Họ và tên <span className="font-normal text-slate-400">(không bắt buộc)</span>
+            </label>
+            <input
+              id="student-name"
+              type="text"
+              value={studentName}
+              onChange={(e) => setStudentName(e.target.value.slice(0, 100))}
+              maxLength={100}
+              autoComplete="name"
+              placeholder="Nhập họ và tên (có thể bỏ trống)"
+              className="w-full min-h-11 px-3 py-2 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600"
+            />
+            <p className="mt-1 text-[11px] text-slate-500">Tên chỉ dùng để hiển thị trong dữ liệu quản trị; mã người thực hiện vẫn là mã định danh chính.</p>
+          </div>
+          {/* Thông tin trường, khối và giới tính */}
           <div className="space-y-4 pt-1">
             <div>
               <label htmlFor="school-select" className="block text-xs font-semibold text-slate-700 mb-1.5">
