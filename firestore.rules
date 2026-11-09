@@ -2,9 +2,32 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Shared survey collection. Participants do not need accounts.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'khaosatgiacngungan@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
     match /all_surveys/{sessionId} {
-      allow read, write: if true;
+      // Participants may submit a completed survey without creating an account.
+      allow create: if
+        request.resource.data.id == sessionId
+        && request.resource.data.keys().hasAll([
+          'id',
+          'createdAt',
+          'studentInfo',
+          'preNap',
+          'napDurationMinutes',
+          'postNap',
+          'savedAt'
+        ])
+        && request.resource.data.napDurationMinutes is int
+        && request.resource.data.napDurationMinutes >= 5
+        && request.resource.data.napDurationMinutes <= 60;
+
+      // Only the verified administrator may view or delete survey records.
+      allow read, delete: if isAdmin();
+      allow update: if false;
     }
   }
 }
