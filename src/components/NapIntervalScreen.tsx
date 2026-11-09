@@ -279,7 +279,7 @@ export const NapIntervalScreen: React.FC<NapIntervalScreenProps> = ({
             </span>
           ) : (
             <span>
-              <strong>{minutes} phút:</strong> Giấc ngủ dài hơn 30 phút có thể kích hoạt giấc ngủ sóng chậm (Slow-wave sleep), có thể gây hiện tượng "quán tính giấc ngủ" trong khoảng 10-15 phút đầu sau khi thức dậy.
+              <strong>{minutes} phút:</strong> Thời lượng dài hơn 30 phút có thể làm tăng khả năng gặp quán tính giấc ngủ sau khi thức dậy. Mức độ và thời gian uể oải khác nhau tùy người, thời điểm ngủ và tình trạng thiếu ngủ.
             </span>
           )}
         </p>
