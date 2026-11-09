@@ -58,7 +58,6 @@ function MainAppContent() {
 
   // Pre-nap survey & tests state
   const [studentInfo, setStudentInfo] = useState<PreNapInfo>(initialDraft?.studentInfo || { 
-    studentName: '',
     className: 'Khối 11',
     gender: 'Nam',
     school: 'THPT Chi Lăng',
