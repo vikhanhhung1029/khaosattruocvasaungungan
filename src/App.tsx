@@ -13,6 +13,7 @@ import {
   ReactionTestResult,
   SelectiveAttentionResult,
   MemoryTestResult,
+  CalculationTestResult,
   AssessmentData,
   FullNapSession,
 } from './types';
@@ -22,6 +23,7 @@ import { PreNapSurvey } from './components/PreNapSurvey';
 import { ReactionTimeTest } from './components/ReactionTimeTest';
 import { SelectiveAttentionTest } from './components/SelectiveAttentionTest';
 import { MemoryTest } from './components/MemoryTest';
+import { CalculationTest } from './components/CalculationTest';
 import { NapIntervalScreen } from './components/NapIntervalScreen';
 import { PostNapSurvey } from './components/PostNapSurvey';
 import { ComparisonReport } from './components/ComparisonReport';
@@ -38,8 +40,8 @@ function readSurveyDraft(): any | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     const validPhases: SurveyPhase[] = [
-      'pre_reaction', 'pre_attention', 'pre_memory', 'nap_interval',
-      'post_survey', 'post_reaction', 'post_attention', 'post_memory',
+      'pre_reaction', 'pre_attention', 'pre_memory', 'pre_calculation', 'nap_interval',
+      'post_survey', 'post_reaction', 'post_attention', 'post_memory', 'post_calculation',
     ];
     return parsed && validPhases.includes(parsed.phase) ? parsed : null;
   } catch {
@@ -74,6 +76,7 @@ function MainAppContent() {
   const [preReaction, setPreReaction] = useState<ReactionTestResult | null>(initialDraft?.preReaction || null);
   const [preAttention, setPreAttention] = useState<SelectiveAttentionResult | null>(initialDraft?.preAttention || null);
   const [preMemory, setPreMemory] = useState<MemoryTestResult | null>(initialDraft?.preMemory || null);
+  const [preCalculation, setPreCalculation] = useState<CalculationTestResult | null>(initialDraft?.preCalculation || null);
 
   // Nap interval state
   const [napMinutes, setNapMinutes] = useState<number>(initialDraft?.napMinutes ?? 20);
@@ -85,6 +88,7 @@ function MainAppContent() {
   const [postReaction, setPostReaction] = useState<ReactionTestResult | null>(initialDraft?.postReaction || null);
   const [postAttention, setPostAttention] = useState<SelectiveAttentionResult | null>(initialDraft?.postAttention || null);
   const [postMemory, setPostMemory] = useState<MemoryTestResult | null>(initialDraft?.postMemory || null);
+  const [postCalculation, setPostCalculation] = useState<CalculationTestResult | null>(initialDraft?.postCalculation || null);
 
   // Final Session Result
   const [finalSession, setFinalSession] = useState<FullNapSession | null>(null);
@@ -106,18 +110,18 @@ function MainAppContent() {
     try {
       localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({
         phase, surveyStartedAt, preAssessmentCompletedAt, studentInfo,
-        preAlertness, preFatigue, preReaction, preAttention, preMemory,
+        preAlertness, preFatigue, preReaction, preAttention, preMemory, preCalculation,
         napMinutes, napNotes, postAlertness, postFatigue, postReaction,
-        postAttention, postMemory,
+        postAttention, postMemory, postCalculation,
       }));
     } catch (error) {
       console.error('Không thể lưu tiến độ khảo sát trên thiết bị:', error);
     }
   }, [
     phase, surveyStartedAt, preAssessmentCompletedAt, studentInfo,
-    preAlertness, preFatigue, preReaction, preAttention, preMemory,
+    preAlertness, preFatigue, preReaction, preAttention, preMemory, preCalculation,
     napMinutes, napNotes, postAlertness, postFatigue, postReaction,
-    postAttention, postMemory,
+    postAttention, postMemory, postCalculation,
   ]);
 
   // Handle Step 1: Pre-nap Survey
@@ -150,6 +154,12 @@ function MainAppContent() {
   // Handle Step 4: Pre-nap Memory Test
   const handlePreMemoryComplete = (result: MemoryTestResult) => {
     setPreMemory(result);
+    setPhase('pre_calculation');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePreCalculationComplete = (result: CalculationTestResult) => {
+    setPreCalculation(result);
     setPreAssessmentCompletedAt(new Date().toISOString());
     setPhase('nap_interval');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -190,10 +200,16 @@ function MainAppContent() {
   };
 
   // Handle Step 9: Post-nap Memory Test -> Compile Final Report!
-  const handlePostMemoryComplete = async (result: MemoryTestResult) => {
+  const handlePostMemoryComplete = (result: MemoryTestResult) => {
     setPostMemory(result);
+    setPhase('post_calculation');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-    if (!preReaction || !preAttention || !preMemory || !postReaction || !postAttention) {
+  const handlePostCalculationComplete = async (result: CalculationTestResult) => {
+    setPostCalculation(result);
+
+    if (!preReaction || !preAttention || !preMemory || !preCalculation || !postReaction || !postAttention || !postMemory) {
       console.error('Missing pre-nap or post-nap test results; refusing to create an incomplete assessment.');
       return;
     }
@@ -204,6 +220,7 @@ function MainAppContent() {
       reactionTest: preReaction,
       attentionTest: preAttention,
       memoryTest: preMemory,
+      calculationTest: preCalculation,
       completedAt: preAssessmentCompletedAt || new Date().toISOString(),
     };
 
@@ -212,7 +229,8 @@ function MainAppContent() {
       fatigue: postFatigue,
       reactionTest: postReaction,
       attentionTest: postAttention,
-      memoryTest: result,
+      memoryTest: postMemory,
+      calculationTest: result,
       completedAt: new Date().toISOString(),
     };
 
@@ -279,6 +297,7 @@ function MainAppContent() {
     setPreReaction(null);
     setPreAttention(null);
     setPreMemory(null);
+    setPreCalculation(null);
     setNapMinutes(20);
     setNapNotes('');
     setPostAlertness(4);
@@ -286,6 +305,7 @@ function MainAppContent() {
     setPostReaction(null);
     setPostAttention(null);
     setPostMemory(null);
+    setPostCalculation(null);
     setFinalSession(null);
     setSurveyKey((prev) => prev + 1);
     setPhase('pre_survey');
@@ -350,7 +370,11 @@ function MainAppContent() {
           />
         )}
 
-        {/* Phase 5: Nap Interval Screen */}
+        {phase === 'pre_calculation' && (
+          <CalculationTest phaseTitle="Trước khi ngủ" onComplete={handlePreCalculationComplete} />
+        )}
+
+        {/* Phase 6: Nap Interval Screen */}
         {phase === 'nap_interval' && (
           <NapIntervalScreen onConfirmNapDuration={handleConfirmNap} />
         )}
@@ -388,7 +412,11 @@ function MainAppContent() {
           />
         )}
 
-        {/* Phase 10: Comparison Report */}
+        {phase === 'post_calculation' && (
+          <CalculationTest phaseTitle="Sau khi ngủ" onComplete={handlePostCalculationComplete} />
+        )}
+
+        {/* Phase 11: Comparison Report */}
         {phase === 'report' && finalSession && (
           <ComparisonReport
             session={finalSession}
