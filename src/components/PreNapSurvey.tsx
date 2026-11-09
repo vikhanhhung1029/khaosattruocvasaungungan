@@ -125,7 +125,6 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
     setErrorMsg(null);
     onSubmit(
       {
-        studentName: '',
         studentId: deviceRespondentId,
         className: selectedClassName,
         gender: selectedGender,
@@ -194,7 +193,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
         <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2.5 text-xs text-slate-600">
           <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
           <div className="leading-relaxed">
-            <strong className="text-slate-900 font-semibold">Cam kết bảo mật thông tin đối tượng:</strong> Khảo sát không yêu cầu họ tên. Mỗi trình duyệt được cấp một mã người thực hiện riêng để phân biệt các lần tham gia. Dữ liệu được lưu trên Firebase và gửi đến email quản trị qua dịch vụ email tự động; chỉ tài khoản quản trị được cấp quyền mới có thể xem dữ liệu trong bảng quản trị. Vui lòng không nhập thông tin riêng tư không cần thiết.
+            <strong className="text-slate-900 font-semibold">Thông tin về dữ liệu khảo sát:</strong> Khảo sát không yêu cầu họ tên. Mỗi trình duyệt được cấp một mã người thực hiện riêng để phân biệt các lần tham gia. Dữ liệu được lưu trên Firebase và gửi đến email quản trị qua dịch vụ email tự động; chỉ tài khoản quản trị được cấp quyền mới có thể xem dữ liệu trong bảng quản trị. Vui lòng không nhập thông tin riêng tư không cần thiết.
           </div>
         </div>
 
@@ -319,7 +318,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
               <button
                 type="button"
                 onClick={() => setHadCoffee(false)}
-                className={`h-11 px-4 rounded-xl border text-xs font-semibold flex items-center justify-center transition-all ${
+                className={`min-h-[48px] h-auto py-2 px-2 rounded-xl border text-xs leading-snug text-center whitespace-normal font-semibold flex items-center justify-center transition-all ${
                   !hadCoffee
                     ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm'
                     : 'border-slate-200 text-slate-600 hover:bg-slate-50'
