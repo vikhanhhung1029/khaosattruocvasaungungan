@@ -12,12 +12,12 @@ import {
 import firebaseConfig from '../firebase-config.json';
 import { FullNapSession } from './types';
 
-// Firebase is retained only for anonymous Firestore survey storage.
-// Authentication and OAuth are intentionally not initialized.
+// Connect this website to the new Firebase project.
+// The previous Firebase project and its stored data are left untouched.
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = getFirestore(app);
 
-/** Save a completed survey to the shared Firestore collection. */
+/** Save a completed survey to the new project's default Firestore database. */
 export async function saveSurveyToGlobal(session: FullNapSession): Promise<void> {
   try {
     await setDoc(doc(db, 'all_surveys', session.id), {
