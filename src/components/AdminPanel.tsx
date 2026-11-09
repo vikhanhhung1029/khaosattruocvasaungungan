@@ -81,7 +81,7 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
     return sessions.filter((s) => {
       const info = s.studentInfo || ({} as FullNapSession['studentInfo']);
       const matchesTerm = !term || [
-        s.id, info.studentId, info.school, info.className,
+        s.id, info.studentId, info.studentName, info.school, info.className,
       ].some((v) => String(v || '').toLowerCase().includes(term));
       return matchesTerm
         && (classFilter === 'all' || info.className === classFilter)
@@ -107,14 +107,14 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
 
   const exportCsv = () => {
     const headers = [
-      'Ma phien', 'Ma nguoi thuc hien', 'Truong', 'Lop', 'Gioi tinh',
+      'Ma phien', 'Ma nguoi thuc hien', 'Ho va ten', 'Truong', 'Lop', 'Gioi tinh',
       'Thoi luong ngu (phut)', 'Tinh tao truoc', 'Tinh tao sau',
       'Met moi truoc', 'Met moi sau', 'Phan xa TB truoc (ms)',
       'Phan xa TB sau (ms)', 'Chu y truoc (%)', 'Chu y sau (%)',
       'Tri nho truoc (%)', 'Tri nho sau (%)', 'Bat dau', 'Hoan tat',
     ];
     const rows = filtered.map((s) => [
-      s.id, s.studentInfo?.studentId, s.studentInfo?.school, s.studentInfo?.className,
+      s.id, s.studentInfo?.studentId, s.studentInfo?.studentName, s.studentInfo?.school, s.studentInfo?.className,
       s.studentInfo?.gender, s.napDurationMinutes,
       s.preNap?.alertness, s.postNap?.alertness, s.preNap?.fatigue, s.postNap?.fatigue,
       s.preNap?.reactionTest?.averageTime, s.postNap?.reactionTest?.averageTime,
@@ -202,7 +202,7 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
                       </tr></thead>
                       <tbody>
                         {filtered.map((s) => <tr key={s.id} className="border-t hover:bg-slate-50">
-                          <td className="p-3"><div className="font-semibold text-slate-800">{s.studentInfo?.studentId || 'Chưa có mã'}</div><div className="text-xs text-slate-400">{s.id}</div></td>
+                          <td className="p-3"><div className="font-semibold text-slate-800">{s.studentInfo?.studentId || 'Chưa có mã'}</div><div className="text-xs text-slate-600">{s.studentInfo?.studentName || 'Không cung cấp họ tên'}</div><div className="text-xs text-slate-400">{s.id}</div></td>
                           <td className="p-3"><div>{s.studentInfo?.school || '—'}</div><div className="text-xs text-slate-500">{s.studentInfo?.className || '—'}</div></td>
                           <td className="p-3">{s.napDurationMinutes} phút</td>
                           <td className="p-3">{dateTime(s.completedAt || s.createdAt)}</td>
