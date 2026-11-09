@@ -100,7 +100,6 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   const selectedClassName = `Khối ${selectedGrade}`;
 
   // Accessible IDs
-  const studentNameId = useId();
   const bedTimeId = useId();
   const wakeTimeId = useId();
 
@@ -118,16 +117,8 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   const calculatedSleepMinutes = calculateSleepDurationMinutes(bedTime, wakeTime);
   const calculatedSleepHours = Number((calculatedSleepMinutes / 60).toFixed(1));
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Only allow letters (including Vietnamese accents) and spaces
-    const val = e.target.value;
-    const sanitized = val.replace(/[^a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵýỷỹ\s]/g, '');
-    setStudentName(sanitized);
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanName = studentName.trim();
     if (calculatedSleepMinutes <= 0) {
       setErrorMsg('Giờ đi ngủ và giờ thức dậy phải hợp lệ, đồng thời không được trùng nhau.');
       return;
@@ -135,7 +126,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
     setErrorMsg(null);
     onSubmit(
       {
-        studentName: cleanName,
+        studentName: '',
         studentId: deviceRespondentId,
         className: selectedClassName,
         gender: selectedGender,
@@ -204,30 +195,11 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
         <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2.5 text-xs text-slate-600">
           <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
           <div className="leading-relaxed">
-            <strong className="text-slate-900 font-semibold">Cam kết bảo mật thông tin đối tượng:</strong> Toàn bộ họ tên, thông tin sinh hoạt và kết quả các bài kiểm tra được mã hóa và bảo mật nghiêm ngặt. Dữ liệu chỉ dùng cho mục đích thống kê khoa học và hỗ trợ học sinh cải thiện sự tập trung, tuyệt đối không chia sẻ cho bất kỳ bên thứ ba nào.
+            <strong className="text-slate-900 font-semibold">Cam kết bảo mật thông tin đối tượng:</strong> Khảo sát không yêu cầu họ tên. Mỗi trình duyệt được cấp một mã người thực hiện riêng để phân biệt các lần tham gia. Dữ liệu được lưu trên Firebase và gửi đến email quản trị qua dịch vụ email tự động; chỉ tài khoản quản trị được cấp quyền mới có thể xem dữ liệu trong bảng quản trị. Vui lòng không nhập thông tin riêng tư không cần thiết.
           </div>
         </div>
 
-        <div className="space-y-4 pt-1">
-          {/* Họ và tên */}
-          <div>
-            <label htmlFor={studentNameId} className="block text-xs font-semibold text-slate-700 mb-1">
-              Họ và tên học sinh <span className="text-slate-400 font-normal">(Không bắt buộc)</span>
-            </label>
-            <input
-              id={studentNameId}
-              type="text"
-              value={studentName}
-              onChange={handleNameChange}
-              placeholder="VD: Nguyễn Văn An"
-              className="w-full h-11 px-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition"
-            />
-            <span className="text-[11px] text-slate-500 mt-1 block">
-              Có thể để trống. Nếu nhập, chỉ sử dụng chữ cái tiếng Việt và dấu cách.
-            </span>
-          </div>
-
-          {/* Thông tin trường, khối và giới tính */}
+        <div className="space-y-4 pt-1">{/* Thông tin trường, khối và giới tính */}
           <div className="space-y-4 pt-1">
             <div>
               <label htmlFor="school-select" className="block text-xs font-semibold text-slate-700 mb-1.5">
