@@ -48,6 +48,19 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentPhase }) => {
   else if (currentPhase === 'post_memory') subStepLabel = 'Bước 4/4: Kiểm tra trí nhớ ngắn hạn (7 số / 7s) sau ngủ';
   else if (currentPhase === 'report') subStepLabel = 'Hoàn tất: Báo cáo phân tích so sánh & xuất PNG / PDF';
 
+  const progressByPhase: Record<SurveyPhase, number> = {
+    pre_survey: 10,
+    pre_reaction: 20,
+    pre_attention: 30,
+    pre_memory: 40,
+    nap_interval: 50,
+    post_survey: 60,
+    post_reaction: 70,
+    post_attention: 80,
+    post_memory: 90,
+    report: 100,
+  };
+
   return (
     <div className="w-full bg-white border-b border-slate-200 px-4 py-3">
       <div className="max-w-4xl mx-auto">
@@ -90,7 +103,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentPhase }) => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-xs text-slate-500 pt-1">
           <span className="min-w-0 font-medium text-slate-700 leading-relaxed">{subStepLabel}</span>
           <span className="self-end sm:self-auto text-[11px] font-mono tabular-nums text-slate-600">
-            {currentPhase === 'report' ? '100%' : `${Math.round(((Math.max(0, currentStepIndex) * 2.5 + 1) / 10) * 100)}%`}
+            {progressByPhase[currentPhase]}%
           </span>
         </div>
       </div>
