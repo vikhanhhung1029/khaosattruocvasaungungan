@@ -52,7 +52,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentPhase }) => {
     <div className="w-full bg-white border-b border-slate-200 px-4 py-3">
       <div className="max-w-4xl mx-auto">
         {/* Step bars */}
-        <div className="grid grid-cols-4 gap-2 mb-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-2 mb-3">
           {steps.map((step, idx) => {
             const isCompleted = currentStepIndex > idx;
             const isCurrent = currentStepIndex === idx;
@@ -87,9 +87,9 @@ export const StepProgress: React.FC<StepProgressProps> = ({ currentPhase }) => {
         </div>
 
         {/* Current micro status banner */}
-        <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
-          <span className="font-medium text-slate-700">{subStepLabel}</span>
-          <span className="text-[11px] font-mono tabular-nums text-slate-600">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-xs text-slate-500 pt-1">
+          <span className="min-w-0 font-medium text-slate-700 leading-relaxed">{subStepLabel}</span>
+          <span className="self-end sm:self-auto text-[11px] font-mono tabular-nums text-slate-600">
             {currentPhase === 'report' ? '100%' : `${Math.round(((Math.max(0, currentStepIndex) * 2.5 + 1) / 10) * 100)}%`}
           </span>
         </div>
