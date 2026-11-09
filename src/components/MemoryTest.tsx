@@ -541,6 +541,35 @@ export const MemoryTest: React.FC<MemoryTestProps> = ({
             </div>
           </div>
 
+          {/* Exact sequence comparison for all three rounds */}
+          <div className="space-y-3">
+            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">Đối chiếu dãy số gốc và dãy số đã nhập</h4>
+            {completedRounds.map((r) => (
+              <div key={r.roundNumber} className="rounded-xl border border-slate-200 p-3 space-y-2">
+                <div className="flex justify-between text-xs">
+                  <strong className="text-slate-700">Bài {r.roundNumber}</strong>
+                  <span className="text-slate-500">{r.correctDigitsCount}/7 số đúng · {r.accuracyPercentage}%</span>
+                </div>
+                <div>
+                  <span className="block text-[10px] text-slate-500 mb-1">Dãy số đúng</span>
+                  <div className="grid grid-cols-7 gap-1">
+                    {r.targetSequence.split('').map((digit, i) => <span key={i} className="rounded-md bg-slate-100 py-2 text-center font-mono font-bold text-sm">{digit}</span>)}
+                  </div>
+                </div>
+                <div>
+                  <span className="block text-[10px] text-slate-500 mb-1">Dãy số bạn nhập (xanh = đúng vị trí, đỏ = sai hoặc thiếu)</span>
+                  <div className="grid grid-cols-7 gap-1">
+                    {r.targetSequence.split('').map((digit, i) => {
+                      const entered = r.userSequence[i] || '';
+                      const correct = entered === digit;
+                      return <span key={i} className={`rounded-md py-2 text-center font-mono font-bold text-sm border ${correct ? 'bg-emerald-50 border-emerald-300 text-emerald-700' : 'bg-rose-50 border-rose-300 text-rose-700'}`}>{entered || '—'}</span>;
+                    })}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
           {/* Summary scores */}
           <div className="grid grid-cols-2 gap-3 text-center">
             <div className="p-3.5 rounded-xl bg-violet-50 border border-violet-100">
