@@ -114,14 +114,30 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   const memoryPercentDelta = postMemoryPercent - preMemoryPercent;
   const memoryPercentChange = memoryPercentDelta;
 
-  // A single average percentage is intentionally not calculated: the five measures
-  // use different scales/units. Summarize direction by counting improved domains instead.
+  // 6. Arithmetic: compare accuracy first, then completion time when accuracy is equal.
+  const preCalculation = preNap.calculationTest;
+  const postCalculation = postNap.calculationTest;
+  const preCalculationCorrect = preCalculation?.correctCount ?? 0;
+  const postCalculationCorrect = postCalculation?.correctCount ?? 0;
+  const preCalculationAccuracy = preCalculation?.accuracyPercentage ?? 0;
+  const postCalculationAccuracy = postCalculation?.accuracyPercentage ?? 0;
+  const preCalculationTimeMs = preCalculation?.totalTimeMs ?? 0;
+  const postCalculationTimeMs = postCalculation?.totalTimeMs ?? 0;
+  const calculationTimeSavedMs = preCalculationTimeMs - postCalculationTimeMs;
+  const calculationAccuracyDelta = postCalculationAccuracy - preCalculationAccuracy;
+  const calculationImproved = calculationAccuracyDelta > 0
+    || (calculationAccuracyDelta === 0 && preCalculationTimeMs > 0 && postCalculationTimeMs > 0 && calculationTimeSavedMs > 0);
+  const calculationDeclined = calculationAccuracyDelta < 0
+    || (calculationAccuracyDelta === 0 && preCalculationTimeMs > 0 && postCalculationTimeMs > 0 && calculationTimeSavedMs < 0);
+
+  // The six measures use different scales/units; summarize direction by counting improved domains.
   const improvedIndicatorsCount = [
     alertnessDelta > 0,
     fatigueDelta > 0,
     reactionTimeSavedMs > 0,
     attentionAccuracyDelta > 0,
     memoryPercentDelta > 0,
+    calculationImproved,
   ].filter(Boolean).length;
   const declinedIndicatorsCount = [
     alertnessDelta < 0,
@@ -129,12 +145,13 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
     reactionTimeSavedMs < 0,
     attentionAccuracyDelta < 0,
     memoryPercentDelta < 0,
+    calculationDeclined,
   ].filter(Boolean).length;
-  const unchangedIndicatorsCount = 5 - improvedIndicatorsCount - declinedIndicatorsCount;
+  const unchangedIndicatorsCount = 6 - improvedIndicatorsCount - declinedIndicatorsCount;
   const formatSigned = (value: number, suffix = '') => `${value > 0 ? '+' : ''}${value}${suffix}`;
 
   const handleShare = () => {
-    const text = `Báo cáo khảo sát [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, thời lượng ngủ ngắn ${napDurationMinutes} phút. Lĩnh vực cải thiện: ${improvedIndicatorsCount}/5; không đổi: ${unchangedIndicatorsCount}/5; giảm: ${declinedIndicatorsCount}/5.`;
+    const text = `Báo cáo khảo sát [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, thời lượng ngủ ngắn ${napDurationMinutes} phút. Lĩnh vực cải thiện: ${improvedIndicatorsCount}/6; không đổi: ${unchangedIndicatorsCount}/5; giảm: ${declinedIndicatorsCount}/5.`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopyNotice(true);
@@ -396,7 +413,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           <div className="space-y-1.5 text-center md:text-left flex-1">
             <div className="flex items-center justify-center md:justify-start gap-2 text-xs font-bold text-indigo-950 uppercase tracking-wider">
               <TrendingUp className="w-4 h-4 text-indigo-600" />
-              <span>Tổng quan thay đổi 5 lĩnh vực</span>
+              <span>Tổng quan thay đổi 6 lĩnh vực</span>
             </div>
             <p className="text-xs text-slate-600 max-w-lg leading-relaxed">
               Không gộp thành một tỷ lệ phần trăm vì các bài đo dùng thang điểm và đơn vị khác nhau. Báo cáo đếm số lĩnh vực cải thiện, không đổi hoặc giảm.
@@ -409,6 +426,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
               <span>• Giảm thời gian phản xạ: <strong className={reactionSpeedGainPercent >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(reactionSpeedGainPercent, '%')}</strong></span>
               <span>• Chú ý: <strong className={attentionPercentChange >= 0 ? 'text-emerald-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(attentionPercentChange, ' điểm %')}</strong></span>
               <span>• Trí nhớ: <strong className={memoryPercentChange >= 0 ? 'text-violet-700 font-mono font-bold' : 'text-rose-600 font-mono font-bold'}>{formatSigned(memoryPercentChange, ' điểm %')}</strong></span>
+              <span>• Tính toán: <strong className={calculationImproved ? 'text-emerald-700 font-mono font-bold' : calculationDeclined ? 'text-rose-600 font-mono font-bold' : 'text-slate-600 font-mono font-bold'}>{formatSigned(calculationAccuracyDelta, ' điểm %')} độ chính xác</strong></span>
             </div>
           </div>
 
@@ -435,7 +453,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             <p><strong>3. Phản xạ:</strong> Thời gian trung bình = tổng thời gian các lần bấm hợp lệ ÷ số lần hợp lệ. Trước: {preReactionTime} ms ({preNap.reactionTest.trials.length} lần); sau: {postReactionTime} ms ({postNap.reactionTest.trials.length} lần). Mức rút ngắn = {preReactionTime} − {postReactionTime} = <strong>{formatSigned(reactionTimeSavedMs, ' ms')}</strong>; tỷ lệ giảm thời gian = ({preReactionTime} − {postReactionTime}) ÷ {preReactionTime || 1} × 100 = <strong>{reactionSpeedGainPercent}%</strong>. Bấm sớm: {preNap.reactionTest.faults} → {postNap.reactionTest.faults} lần (ghi riêng, không cộng vào thời gian trung bình).</p>
             <p><strong>4. Chú ý:</strong> Trước: max(0, min(100, ({preAttnCorrect} − {preAttnErrors}) ÷ {preAttentionTargets} × 100)) = <strong>{preNetAccuracy}%</strong>. Sau: max(0, min(100, ({postAttnCorrect} − {postAttnErrors}) ÷ {postAttentionTargets} × 100)) = <strong>{postNetAccuracy}%</strong>. Chênh lệch = <strong>{formatSigned(attentionAccuracyDelta, ' điểm %')}</strong>.</p>
             <p><strong>5. Trí nhớ:</strong> Trước: {preMemoryCorrect}/{preTotalDigits} × 100 = <strong>{preMemoryPercent}%</strong>. Sau: {postMemoryCorrect}/{postTotalDigits} × 100 = <strong>{postMemoryPercent}%</strong>. Chênh lệch = <strong>{formatSigned(memoryPercentDelta, ' điểm %')}</strong>.</p>
-            <p className="text-slate-500"><strong>Tổng hợp:</strong> Đếm số trong 5 lĩnh vực có kết quả tốt hơn, không lấy trung bình các tỷ lệ khác đơn vị. Đây là so sánh mô tả trong bài khảo sát, không phải chẩn đoán y khoa.</p>
+            <p className="text-slate-500"><strong>Tổng hợp:</strong> Đếm số trong 6 lĩnh vực có kết quả tốt hơn, không lấy trung bình các tỷ lệ khác đơn vị. Đây là so sánh mô tả trong bài khảo sát, không phải chẩn đoán y khoa.</p>
           </div>
           <div className="border-t border-slate-100 pt-2 text-xs text-slate-600 space-y-1">
             <p>Thời điểm bắt đầu: {new Date(session.startedAt || session.createdAt).toLocaleString('vi-VN')}</p>
@@ -673,6 +691,30 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                     </div>
                   )}
                 </div>
+              </div>
+            </div>
+            {/* 6. Bài kiểm tra tính toán */}
+            <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-3">
+              <div className="flex flex-wrap justify-between items-center gap-2 text-xs">
+                <span className="font-bold text-slate-800 flex items-center gap-1.5"><Brain className="w-4 h-4 text-amber-600" />6. Tính toán: 3 phép nhân hai chữ số</span>
+                <span className="font-mono font-bold">{preCalculationAccuracy}% → <strong className="text-amber-700">{postCalculationAccuracy}%</strong> ({formatSigned(calculationAccuracyDelta, ' điểm %')})</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                {[{label:'Trước khi ngủ',data:preCalculation,accent:'text-slate-800',panel:'bg-white'},{label:'Sau khi ngủ',data:postCalculation,accent:'text-amber-800',panel:'bg-amber-50/70'}].map((entry) => (
+                  <div key={entry.label} className={`rounded-lg border border-slate-200 p-3 text-center space-y-1 ${entry.panel}`}>
+                    <strong className={`block text-[10px] ${entry.accent}`}>{entry.label}</strong>
+                    <div className={`font-mono font-bold text-sm ${entry.accent}`}>{entry.data ? `${entry.data.correctCount}/3 câu đúng` : 'Không có dữ liệu'}</div>
+                    <div className="text-[10px] text-slate-500">Thời gian: {entry.data ? (entry.data.totalTimeMs / 1000).toFixed(2) + ' giây' : '—'}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2">
+                {[{label:'Trước',data:preCalculation},{label:'Sau',data:postCalculation}].map((entry) => entry.data ? (
+                  <div key={entry.label} className="rounded-lg bg-white border border-slate-200 p-3 space-y-1">
+                    <strong className="text-[10px] text-slate-500">{entry.label} khi ngủ</strong>
+                    {entry.data.items.map((item) => <div key={item.questionNumber} className="flex justify-between gap-2 text-xs"><span className="font-mono">{item.operandA} × {item.operandB} = {item.correctAnswer}</span><span className={item.isCorrect ? 'text-emerald-700' : 'text-rose-700'}>Nhập {item.userAnswer} · {item.isCorrect ? 'Đúng' : 'Sai'}</span></div>)}
+                  </div>
+                ) : null)}
               </div>
             </div>
           </div>
