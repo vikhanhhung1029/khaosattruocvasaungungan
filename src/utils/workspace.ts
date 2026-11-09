@@ -84,7 +84,7 @@ export function formatEmailBodyText(session: FullNapSession): string {
     `III. CÁCH TÍNH CÁC CHỈ SỐ:`,
     `- Tỉnh táo: điểm sau - điểm trước = ${deltaAlertness} điểm (thang 1-5).`,
     `- Mức độ mệt mỏi: điểm sau - điểm trước = ${deltaFatigue} điểm; điểm cao hơn biểu thị ít mệt hơn.`,
-    `- Phản xạ: thời gian trung bình = tổng các lần bấm hợp lệ / số lần hợp lệ; mức rút ngắn = ${deltaReaction} ms; tỷ lệ thay đổi = (${preReactionTime} - ${postReactionTime}) / ${session.preNap.reactionTest.averageTime || 1} x 100 = ${reactionImprovementPct}%.`,
+    `- Phản xạ: thời gian trung bình = tổng các lần bấm hợp lệ / số lần hợp lệ; mức rút ngắn = ${deltaReaction} ms; tỷ lệ thay đổi = (${preReactionTime} - ${postReactionTime}) / ${preReactionTime || 1} x 100 = ${reactionImprovementPct}%.`,
     `  Số lần bấm sớm (ghi riêng): trước ${session.preNap.reactionTest.faults}, sau ${session.postNap.reactionTest.faults}.`,
     `- Chú ý: điểm ròng = giới hạn trong 0-100% của [(chữ A đúng - bấm nhầm) / số chữ A mục tiêu x 100]; trước: max(0, min(100, (${session.preNap.attentionTest.foundCorrect} - ${session.preNap.attentionTest.errors}) / ${preAttentionTargets} x 100)) = ${preAttentionPercent}%; sau: max(0, min(100, (${session.postNap.attentionTest.foundCorrect} - ${session.postNap.attentionTest.errors}) / ${postAttentionTargets} x 100)) = ${postAttentionPercent}%.`,
     `- Trí nhớ: tỷ lệ đúng = số vị trí đúng / tổng số vị trí x 100; trước: ${session.preNap.memoryTest.correctDigitsCount}/${preMemDigits} x 100 = ${preMemoryPercent}%; sau: ${session.postNap.memoryTest.correctDigitsCount}/${postMemDigits} x 100 = ${postMemoryPercent}%. Bài chuẩn gồm 3 lượt x 7 chữ số = 21 vị trí.`, 
