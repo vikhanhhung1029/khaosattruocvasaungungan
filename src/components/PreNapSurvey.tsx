@@ -329,7 +329,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
               <button
                 type="button"
                 onClick={() => setHadCoffee(true)}
-                className={`h-11 px-4 rounded-xl border text-xs font-semibold flex items-center justify-center transition-all ${
+                className={`min-h-[48px] h-auto py-2 px-2 rounded-xl border text-xs leading-snug text-center whitespace-normal font-semibold flex items-center justify-center transition-all ${
                   hadCoffee
                     ? 'border-amber-600 bg-amber-50 text-amber-800 shadow-sm'
                     : 'border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -361,7 +361,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
               <button
                 type="button"
                 onClick={() => setHadSoda(false)}
-                className={`h-11 px-4 rounded-xl border text-xs font-semibold flex items-center justify-center transition-all ${
+                className={`min-h-[48px] h-auto py-2 px-2 rounded-xl border text-xs leading-snug text-center whitespace-normal font-semibold flex items-center justify-center transition-all ${
                   !hadSoda
                     ? 'border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm'
                     : 'border-slate-200 text-slate-600 hover:bg-slate-50'
@@ -372,7 +372,7 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
               <button
                 type="button"
                 onClick={() => setHadSoda(true)}
-                className={`h-11 px-4 rounded-xl border text-xs font-semibold flex items-center justify-center transition-all ${
+                className={`min-h-[48px] h-auto py-2 px-2 rounded-xl border text-xs leading-snug text-center whitespace-normal font-semibold flex items-center justify-center transition-all ${
                   hadSoda
                     ? 'border-sky-600 bg-sky-50 text-sky-800 shadow-sm'
                     : 'border-slate-200 text-slate-600 hover:bg-slate-50'
