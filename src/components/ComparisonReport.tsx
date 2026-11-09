@@ -134,7 +134,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
   const formatSigned = (value: number, suffix = '') => `${value > 0 ? '+' : ''}${value}${suffix}`;
 
   const handleShare = () => {
-    const text = `Báo cáo đánh giá giấc ngủ ngắn [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.studentName || 'Không ghi tên'} (${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, ngủ ${napDurationMinutes} phút). Số chỉ số cải thiện: ${improvedIndicatorsCount}/5; không đổi: ${unchangedIndicatorsCount}/5; giảm: ${declinedIndicatorsCount}/5. Mức giảm thời gian phản xạ: ${formatSigned(reactionSpeedGainPercent, '%')}, mức tỉnh táo: ${postNap.alertness}/5 điểm.`;
+    const text = `Báo cáo khảo sát [${studentInfo.studentId || 'Chưa có mã'}]: ${studentInfo.school || 'Chưa chọn trường'}, ${studentInfo.className}, thời lượng ngủ ngắn ${napDurationMinutes} phút. Lĩnh vực cải thiện: ${improvedIndicatorsCount}/5; không đổi: ${unchangedIndicatorsCount}/5; giảm: ${declinedIndicatorsCount}/5.`;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text);
       setCopyNotice(true);
@@ -156,7 +156,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
         cacheBust: true,
       });
 
-      const cleanName = (studentInfo.studentName || 'hoc_sinh')
+      const cleanName = (studentInfo.studentId || session.id)
         .trim()
         .replace(/[^a-zA-Z0-9\u00C0-\u024F\u1EA0-\u1EF9]/g, '_');
 
@@ -221,7 +221,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
         heightLeft -= pdfHeight;
       }
 
-      const cleanName = (studentInfo.studentName || 'hoc_sinh')
+      const cleanName = (studentInfo.studentId || session.id)
         .trim()
         .replace(/[^a-zA-Z0-9\u00C0-\u024F\u1EA0-\u1EF9]/g, '_');
 
@@ -322,7 +322,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
       )}
 
       {/* Main Report Body for Export & View */}
-      <div ref={reportRef} className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+      <div ref={reportRef} className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 shadow-sm space-y-5 sm:space-y-6">
         {/* Report Header */}
         <div className="border-b border-slate-200 pb-5 space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -347,7 +347,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           {/* Student Profile Info Bar */}
           <div className="flex flex-wrap items-center gap-2 text-xs pt-2">
             <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold">
-              Học sinh: {studentInfo.studentName || 'Không ghi tên'}
+              Mã người thực hiện: {studentInfo.studentId || 'Chưa có mã'}
             </span>
             <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono">
               Mã người thực hiện: {studentInfo.studentId || 'Chưa có mã'}
@@ -590,7 +590,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
               <div className="flex justify-between items-center text-xs">
                 <span className="font-bold text-slate-800 flex items-center gap-1.5">
                   <Target className="w-4 h-4 text-emerald-600" />
-                  4. Chú ý chọn lọc: Tỷ lệ chính xác thực (Chuẩn 10 chữ A / 10 giây)
+                  4. Chú ý chọn lọc: Điểm chú ý ròng (10 chữ A / 10 giây)
                 </span>
                 <span className="font-mono font-bold text-xs">
                   {preNetAccuracy}% → <strong className="text-emerald-700">{postNetAccuracy}%</strong>{' '}
@@ -610,7 +610,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                     {preAttnCorrect}/10 chữ A · {preAttnErrors} lỗi
                   </div>
                   <span className="text-[10px] text-slate-500 block mt-0.5">
-                    Thời gian: {preNap.attentionTest.timeSpentSeconds}s · Độ chính xác thực: {preNetAccuracy}%
+                    Thời gian: {preNap.attentionTest.timeSpentSeconds}s · Điểm chú ý ròng: {preNetAccuracy}%
                   </span>
                 </div>
                 <div className="p-2.5 rounded-lg bg-emerald-50/80 border border-emerald-200 text-center">
@@ -619,7 +619,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                     {postAttnCorrect}/10 chữ A · {postAttnErrors} lỗi
                   </div>
                   <span className="text-[10px] text-emerald-700 block mt-0.5">
-                    Thời gian: {postNap.attentionTest.timeSpentSeconds}s · Độ chính xác thực: {postNetAccuracy}%
+                    Thời gian: {postNap.attentionTest.timeSpentSeconds}s · Điểm chú ý ròng: {postNetAccuracy}%
                   </span>
                 </div>
               </div>
@@ -653,7 +653,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                     Độ chính xác: {preMemoryPercent}%
                   </span>
                   {preNap.memoryTest.rounds && (
-                    <div className="text-[9px] text-slate-400 pt-1 border-t border-slate-100 flex justify-center gap-1.5">
+                    <div className="text-[10px] text-slate-400 pt-1 border-t border-slate-100 flex justify-center gap-1.5">
                       {preNap.memoryTest.rounds.map((r, i) => (
                         <span key={i}>B{r.roundNumber}: {r.correctDigitsCount}/7</span>
                       ))}
@@ -692,16 +692,18 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             <p>
               • <strong>Thời lượng ngủ ngắn ({napDurationMinutes} phút):</strong>{' '}
               {napDurationMinutes <= 20
-                ? 'Thời lượng 15-20 phút đạt hiệu quả tối ưu theo mô hình Power Nap. Giai đoạn này giúp dọn sạch phân tử Adenosine tích tụ ở synap thần kinh mà chưa kích hoạt giấc ngủ sóng chậm (Slow-Wave Sleep), giúp loại bỏ sự uể oải và cải thiện phản xạ ngay lập tức.'
+                ? 'Thời lượng 5–20 phút là khoảng nghỉ ngắn. Một giấc ngủ ngắn có thể giúp giảm buồn ngủ, nhưng mức độ tỉnh táo sau khi thức dậy khác nhau giữa từng người; không thể kết luận hiệu quả chỉ dựa trên thời lượng.'
                 : napDurationMinutes <= 30
-                ? 'Thời lượng 21-30 phút có thể hỗ trợ giảm mệt mỏi; phản ứng sau khi thức dậy có thể khác nhau giữa từng người.'
-                : 'Giấc ngủ trên 30 phút có thể làm tăng khả năng thức dậy trong trạng thái uể oải ở một số người; phản ứng thực tế cần được đánh giá qua kết quả đo.'}
+                ? 'Thời lượng 21–30 phút vẫn thuộc nhóm ngủ ngắn. Một số người có thể cảm thấy tỉnh táo hơn, nhưng cũng có thể xuất hiện cảm giác uể oải tạm thời sau khi thức dậy.'
+                : 'Thời lượng trên 30 phút có thể làm tăng khả năng thức dậy trong giai đoạn ngủ sâu và gặp quán tính giấc ngủ. Mức độ ảnh hưởng tùy thời điểm ngủ và tình trạng thiếu ngủ trước đó.'}
             </p>
             <p>
               • <strong>Tương quan giấc ngủ ban đêm ({studentInfo.sleepHours} giờ):</strong>{' '}
-              {studentInfo.sleepHours < 7
-                ? 'Thời lượng ngủ đêm chưa đạt mức khuyến nghị (7-8 giờ), giấc ngủ ngắn đóng vai trò bù đắp nợ ngủ (Sleep Debt), giúp duy trì trạng thái nhận thức ổn định cho các hoạt động tiếp theo.'
-                : 'Giấc ngủ ban đêm đã được đảm bảo, giấc ngủ ngắn giúp tối ưu hóa hiệu suất làm việc đỉnh cao vào buổi chiều.'}
+              {studentInfo.sleepHours < 8
+                ? 'Thời lượng ngủ đêm dưới khoảng khuyến nghị 8–10 giờ cho thanh thiếu niên 13–18 tuổi. Giấc ngủ ngắn không thay thế được việc ngủ đủ và đều đặn vào ban đêm.'
+                : studentInfo.sleepHours <= 10
+                ? 'Thời lượng ngủ đêm nằm trong khoảng khuyến nghị 8–10 giờ cho thanh thiếu niên 13–18 tuổi. Đây là dữ liệu tự khai báo, không tự xác nhận chất lượng giấc ngủ.'
+                : 'Thời lượng ngủ đêm cao hơn khoảng tham khảo 8–10 giờ. Nhu cầu ngủ có thể khác nhau; cần xem xét lịch sinh hoạt và cảm giác nghỉ ngơi thực tế.'}
             </p>
             {studentInfo.hadCoffee ? (
               <p>
@@ -714,7 +716,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             )}
             {studentInfo.hadSoda ? (
               <p>
-                • <strong>Tác động của Nước ngọt / Nước có ga:</strong> Có ghi nhận sử dụng nước ngọt/nước có ga trước khi ngủ ngắn{studentInfo.sodaDetails ? ` (${studentInfo.sodaDetails})` : ''}. Năng lượng từ đường đơn cung cấp glucose tạm thời cho não bộ, nên kết hợp uống nước lọc để giữ cân bằng điện giải.
+                • <strong>Tác động của Nước ngọt / Nước có ga:</strong> Có ghi nhận sử dụng nước ngọt/nước có ga trước khi ngủ ngắn{studentInfo.sodaDetails ? ` (${studentInfo.sodaDetails})` : ''}. Thông tin này chỉ được ghi nhận để đối chiếu với kết quả; không thể kết luận đồ uống là nguyên nhân làm thay đổi khả năng chú ý hoặc phản xạ.
               </p>
             ) : (
               <p>
@@ -794,8 +796,8 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             {/* Quick summary box */}
             <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 text-left space-y-2 text-xs">
               <div className="flex justify-between py-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Học sinh:</span>
-                <strong className="text-slate-900 font-bold">{studentInfo.studentName || 'Chưa đặt tên'}</strong>
+                <span className="text-slate-500">Mã người thực hiện:</span>
+                <strong className="text-slate-900 font-bold">{studentInfo.studentId || 'Chưa có mã'}</strong>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/60">
                 <span className="text-slate-500">Lớp:</span>
