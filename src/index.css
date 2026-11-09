@@ -55,11 +55,11 @@ canvas {
 }
 
 @media (max-width: 640px) {
-  .text-\\[9px\\] {
+  [class~="text-[9px]"] {
     font-size: 10px !important;
   }
 
-  .text-\\[10px\\] {
+  [class~="text-[10px]"] {
     font-size: 11px !important;
   }
 
