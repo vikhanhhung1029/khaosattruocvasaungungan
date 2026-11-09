@@ -346,9 +346,6 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
 
           {/* Student Profile Info Bar */}
           <div className="flex flex-wrap items-center gap-2 text-xs pt-2">
-            <span className="px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-800 border border-indigo-200 font-bold">
-              Mã người thực hiện: {studentInfo.studentId || 'Chưa có mã'}
-            </span>
             <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-bold font-mono">
               Mã người thực hiện: {studentInfo.studentId || 'Chưa có mã'}
             </span>
@@ -669,7 +666,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                     Độ chính xác: {postMemoryPercent}%
                   </span>
                   {postNap.memoryTest.rounds && (
-                    <div className="text-[9px] text-violet-600 pt-1 border-t border-violet-100 flex justify-center gap-1.5">
+                    <div className="text-[10px] text-violet-600 pt-1 border-t border-violet-100 flex justify-center gap-1.5">
                       {postNap.memoryTest.rounds.map((r, i) => (
                         <span key={i}>B{r.roundNumber}: {r.correctDigitsCount}/7</span>
                       ))}
@@ -707,7 +704,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             </p>
             {studentInfo.hadCoffee ? (
               <p>
-                • <strong>Tác động của Cà phê:</strong> Có ghi nhận sử dụng cà phê trước khi ngủ ngắn{studentInfo.coffeeDetails ? ` (${studentInfo.coffeeDetails})` : ''}. Caffein mất khoảng 20-30 phút để bắt đầu phát huy tác dụng sinh học tại thụ thể thần kinh, trùng khớp với thời điểm thức dậy (hiệu ứng Coffee Nap), giúp nhân đôi sự tỉnh táo và cải thiện phản xạ.
+                • <strong>Tác động của Cà phê:</strong> Có ghi nhận sử dụng cà phê trước khi ngủ ngắn{studentInfo.coffeeDetails ? ` (${studentInfo.coffeeDetails})` : ''}. Caffeine có thể ảnh hưởng đến mức độ tỉnh táo, nhưng báo cáo này chỉ ghi nhận việc sử dụng; không thể xác định caffeine có gây ra thay đổi trong kết quả hay không.
               </p>
             ) : (
               <p>
