@@ -48,7 +48,7 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
 
   const pressDigit = (digit: string) => {
     if (stage !== 'test') return;
-    setCurrentAnswer((value) => value.length < 4 ? value + digit : value);
+    setCurrentAnswer((value) => value.length < 3 ? value + digit : value);
   };
 
   const deleteDigit = () => {
@@ -187,11 +187,11 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
           </div>
 
           <div className="flex justify-center gap-2 py-1">
-            {[0, 1, 2, 3].map((index) => {
+            {[0, 1, 2].map((index) => {
               const char = currentAnswer[index] || '';
               const isCurrent = currentAnswer.length === index;
               return (
-                <div key={index} className={`w-12 h-14 sm:w-14 sm:h-16 rounded-xl flex items-center justify-center text-2xl sm:text-3xl font-mono font-bold border-2 ${isCurrent ? 'border-amber-600 bg-amber-50 text-amber-900 ring-2 ring-amber-500/20' : char ? 'border-slate-300 bg-white text-slate-900' : 'border-slate-200 bg-slate-50 text-slate-400'}`}>
+                <div key={index} className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center text-2xl sm:text-3xl font-mono font-bold border-2 ${isCurrent ? 'border-amber-600 bg-amber-50 text-amber-900 ring-2 ring-amber-500/20' : char ? 'border-slate-300 bg-white text-slate-900' : 'border-slate-200 bg-slate-50 text-slate-400'}`}>
                   {char || '·'}
                 </div>
               );
