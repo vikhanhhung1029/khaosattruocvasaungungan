@@ -330,7 +330,7 @@ export const MemoryTest: React.FC<MemoryTestProps> = ({
           </div>
 
           {/* User Input Boxes */}
-          <div className="flex justify-center gap-2 sm:gap-3 py-2">
+          <div className="flex justify-center gap-1 sm:gap-3 py-2">
             {[0, 1, 2, 3, 4, 5, 6].map((idx) => {
               const char = userDigits[idx] || '';
               const isCurrent = userDigits.length === idx;
@@ -338,7 +338,7 @@ export const MemoryTest: React.FC<MemoryTestProps> = ({
               return (
                 <div
                   key={idx}
-                  className={`w-10 h-13 sm:w-13 sm:h-16 rounded-xl flex items-center justify-center text-2xl sm:text-3xl font-mono font-bold transition-all border-2 ${
+                  className={`w-8 h-11 sm:w-13 sm:h-16 rounded-xl flex items-center justify-center text-xl sm:text-3xl font-mono font-bold transition-all border-2 ${
                     isCurrent
                       ? 'border-violet-600 bg-violet-50 text-violet-900 ring-2 ring-violet-500/20'
                       : char
