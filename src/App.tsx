@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useState } from 'react';
+import { AdminPanel } from './components/AdminPanel';
 import {
   SurveyPhase,
   PreNapInfo,
@@ -47,6 +48,7 @@ function readSurveyDraft(): any | null {
 }
 
 function MainAppContent() {
+  const [adminOpen, setAdminOpen] = useState(false);
   const [initialDraft] = useState<any | null>(() => readSurveyDraft());
   // Current survey phase
   const [phase, setPhase] = useState<SurveyPhase>(initialDraft?.phase || 'pre_survey');
@@ -305,6 +307,7 @@ function MainAppContent() {
       <Header
         onReset={handleReset}
         hasActiveSession={phase !== 'pre_survey'}
+        onAdminOpen={() => setAdminOpen(true)}
       />
 
       {/* Step Progress Tracker */}
@@ -395,6 +398,7 @@ function MainAppContent() {
           />
         )}
       </main>
+      {adminOpen && <AdminPanel onClose={() => setAdminOpen(false)} />}
     </div>
   );
 }
