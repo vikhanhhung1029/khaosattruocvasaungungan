@@ -27,6 +27,7 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
   const [elapsedMs, setElapsedMs] = useState(0);
   const [feedback, setFeedback] = useState<CalculationItemResult | null>(null);
   const startedAtRef = useRef<number | null>(null);
+  const accumulatedMsRef = useRef<number>(0);
   const timerRef = useRef<number | null>(null);
   const finalElapsedRef = useRef<number>(0);
 
@@ -44,10 +45,11 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     setElapsedMs(0);
     setFeedback(null);
     startedAtRef.current = performance.now();
+    accumulatedMsRef.current = 0;
     finalElapsedRef.current = 0;
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
-      if (startedAtRef.current !== null) setElapsedMs(Math.floor(performance.now() - startedAtRef.current));
+      if (startedAtRef.current !== null) setElapsedMs(Math.floor(accumulatedMsRef.current + performance.now() - startedAtRef.current));
     }, 100);
     setStage('answer');
   };
@@ -56,6 +58,11 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     event.preventDefault();
     if (!/^\\d{1,5}$/.test(answer.trim()) || stage !== 'answer') return;
     const parsed = Number(answer);
+    if (startedAtRef.current !== null) {
+      accumulatedMsRef.current += Math.max(0, performance.now() - startedAtRef.current);
+      startedAtRef.current = null;
+      setElapsedMs(Math.round(accumulatedMsRef.current));
+    }
     const item: CalculationItemResult = {
       questionNumber: index + 1,
       operandA: current.a,
@@ -68,9 +75,8 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     setItems(nextItems);
     setFeedback(item);
     if (index === 2 && startedAtRef.current !== null) {
-      finalElapsedRef.current = Math.max(0, Math.round(performance.now() - startedAtRef.current));
+      finalElapsedRef.current = Math.max(0, Math.round(accumulatedMsRef.current));
       setElapsedMs(finalElapsedRef.current);
-      startedAtRef.current = null;
       if (timerRef.current !== null) window.clearInterval(timerRef.current);
       timerRef.current = null;
     }
@@ -81,6 +87,7 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
   const continueNext = () => {
     if (index < 2) {
       setIndex(index + 1);
+      startedAtRef.current = performance.now();
       setStage('answer');
       return;
     }
@@ -106,6 +113,8 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     setAnswer('');
     setElapsedMs(0);
     finalElapsedRef.current = 0;
+    accumulatedMsRef.current = 0;
+    startedAtRef.current = null;
   };
 
   return (
