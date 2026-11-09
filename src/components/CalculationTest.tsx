@@ -29,7 +29,6 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
   const startedAtRef = useRef<number | null>(null);
   const accumulatedMsRef = useRef<number>(0);
   const timerRef = useRef<number | null>(null);
-  const finalElapsedRef = useRef<number>(0);
 
   useEffect(() => () => {
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
@@ -46,7 +45,6 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     setFeedback(null);
     startedAtRef.current = performance.now();
     accumulatedMsRef.current = 0;
-    finalElapsedRef.current = 0;
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
       if (startedAtRef.current !== null) setElapsedMs(Math.floor(accumulatedMsRef.current + performance.now() - startedAtRef.current));
@@ -75,7 +73,6 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     setItems(nextItems);
     setFeedback(item);
     if (index === 2 && startedAtRef.current !== null) {
-      finalElapsedRef.current = Math.max(0, Math.round(accumulatedMsRef.current));
       setElapsedMs(finalElapsedRef.current);
       if (timerRef.current !== null) window.clearInterval(timerRef.current);
       timerRef.current = null;
