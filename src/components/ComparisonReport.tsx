@@ -436,7 +436,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
                 Số lĩnh vực cải thiện
               </span>
               <div className="text-2xl sm:text-3xl font-black font-mono tracking-tight mt-1 text-emerald-700">
-                {improvedIndicatorsCount}/5
+                {improvedIndicatorsCount}/6
               </div>
               <div className="text-[10px] text-slate-500 mt-1">
                 Không đổi: {unchangedIndicatorsCount} · Giảm: {declinedIndicatorsCount}
