@@ -67,7 +67,6 @@ export const PreNapSurvey: React.FC<PreNapSurveyProps> = ({
   initialFatigue = 2,
   onSubmit,
 }) => {
-  const [studentName, setStudentName] = useState(initialInfo?.studentName || '');
   const [deviceRespondentId] = useState<string>(getOrCreateDeviceRespondentId);
   
   const initialGrade = initialInfo?.className?.match(/10|11|12/)?.[0] || '11';
