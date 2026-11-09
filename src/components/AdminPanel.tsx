@@ -143,7 +143,7 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
                 <p className="text-xs text-slate-500">Kho dữ liệu Firestore · quyền quản trị riêng</p>
               </div>
             </div>
-            <button onClick={onClose} aria-label="Đóng" className="p-2 rounded-lg hover:bg-slate-100"><X /></button>
+            <button onClick={onClose} aria-label="Đóng" className="min-w-11 min-h-11 p-2 rounded-lg hover:bg-slate-100"><X /></button>
           </header>
 
           <div className="p-4 sm:p-6">
@@ -168,8 +168,8 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
                     <p className="font-semibold text-slate-800 break-all">{user.email}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => void loadSessions()} disabled={loading} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border bg-white text-sm font-medium disabled:opacity-50"><RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> Làm mới</button>
-                    <button onClick={() => void signOutAdmin()} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border bg-white text-sm font-medium"><LogOut size={16} /> Đăng xuất</button>
+                    <button onClick={() => void loadSessions()} disabled={loading} className="min-h-11 inline-flex items-center gap-2 px-3 py-2 rounded-lg border bg-white text-sm font-medium disabled:opacity-50"><RefreshCw size={16} className={loading ? 'animate-spin' : ''} /> Làm mới</button>
+                    <button onClick={() => void signOutAdmin()} className="min-h-11 inline-flex items-center gap-2 px-3 py-2 rounded-lg border bg-white text-sm font-medium"><LogOut size={16} /> Đăng xuất</button>
                   </div>
                 </div>
 
