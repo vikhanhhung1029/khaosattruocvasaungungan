@@ -111,7 +111,7 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
       'Thoi luong ngu (phut)', 'Tinh tao truoc', 'Tinh tao sau',
       'Met moi truoc', 'Met moi sau', 'Phan xa TB truoc (ms)',
       'Phan xa TB sau (ms)', 'Chu y truoc (%)', 'Chu y sau (%)',
-      'Tri nho truoc (%)', 'Tri nho sau (%)', 'Bat dau', 'Hoan tat',
+      'Tri nho truoc (%)', 'Tri nho sau (%)', 'Tinh toan truoc (dung/3)', 'Tinh toan sau (dung/3)', 'Thoi gian tinh toan truoc (s)', 'Thoi gian tinh toan sau (s)', 'Bat dau', 'Hoan tat',
     ];
     const rows = filtered.map((s) => [
       s.id, s.studentInfo?.studentId, s.studentInfo?.studentName, s.studentInfo?.school, s.studentInfo?.className,
@@ -120,6 +120,9 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
       s.preNap?.reactionTest?.averageTime, s.postNap?.reactionTest?.averageTime,
       s.preNap?.attentionTest?.accuracyPercentage, s.postNap?.attentionTest?.accuracyPercentage,
       s.preNap?.memoryTest?.accuracyPercentage, s.postNap?.memoryTest?.accuracyPercentage,
+      s.preNap?.calculationTest?.correctCount, s.postNap?.calculationTest?.correctCount,
+      s.preNap?.calculationTest ? (s.preNap.calculationTest.totalTimeMs / 1000).toFixed(2) : '',
+      s.postNap?.calculationTest ? (s.postNap.calculationTest.totalTimeMs / 1000).toFixed(2) : '',
       s.startedAt, s.completedAt || s.createdAt,
     ]);
     const content = '\uFEFF' + [headers, ...rows].map((row) => row.map(csvCell).join(',')).join('\r\n');
