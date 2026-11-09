@@ -309,7 +309,7 @@ export const SelectiveAttentionTest: React.FC<SelectiveAttentionTestProps> = ({
             </div>
 
             <div className="p-3.5 rounded-xl bg-indigo-50 border border-indigo-100 text-center">
-              <span className="text-[11px] text-indigo-700 font-semibold block">Độ chính xác thực</span>
+              <span className="text-[11px] text-indigo-700 font-semibold block">Điểm chú ý ròng</span>
               <span className="text-2xl font-black text-indigo-700 font-mono tabular-nums">
                 {Math.max(0, Math.round(((foundCorrect - errors) / EXACT_TARGET_COUNT) * 100))}%
               </span>
