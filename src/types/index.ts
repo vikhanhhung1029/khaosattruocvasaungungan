@@ -55,12 +55,30 @@ export interface MemoryTestResult {
   rounds?: MemoryRoundItem[];
 }
 
+export interface CalculationItemResult {
+  questionNumber: number;
+  operandA: number;
+  operandB: number;
+  correctAnswer: number;
+  userAnswer: number;
+  isCorrect: boolean;
+}
+
+export interface CalculationTestResult {
+  items: CalculationItemResult[];
+  correctCount: number;
+  totalQuestions: number;
+  accuracyPercentage: number;
+  totalTimeMs: number;
+}
+
 export interface AssessmentData {
   alertness: AlertnessLevel;
   fatigue: FatigueLevel;
   reactionTest: ReactionTestResult;
   attentionTest: SelectiveAttentionResult;
   memoryTest: MemoryTestResult;
+  calculationTest?: CalculationTestResult;
   completedAt: string;
 }
 
@@ -81,9 +99,11 @@ export type SurveyPhase =
   | 'pre_reaction' // Step 2: Reaction test
   | 'pre_attention' // Step 3: Selective attention test
   | 'pre_memory' // Step 4: Memory test
+  | 'pre_calculation' // Step 5: Timed arithmetic test
   | 'nap_interval' // Step 5: Input nap duration / power nap timer
   | 'post_survey' // Step 6: Post-nap alertness/fatigue
   | 'post_reaction' // Step 7: Post-nap reaction test
   | 'post_attention' // Step 8: Post-nap selective attention test
   | 'post_memory' // Step 9: Post-nap memory test
+  | 'post_calculation' // Step 10: Post-nap timed arithmetic test
   | 'report'; // Step 10: Comparison Report & PDF Export
