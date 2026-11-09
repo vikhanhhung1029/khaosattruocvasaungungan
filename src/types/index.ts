@@ -2,7 +2,7 @@ export type AlertnessLevel = 1 | 2 | 3 | 4 | 5;
 export type FatigueLevel = 1 | 2 | 3 | 4 | 5;
 
 export interface PreNapInfo {
-  studentName: string;
+  studentName?: string; // Legacy field retained for older records; new surveys do not collect names.
   studentId?: string;
   className: string; // Selected grade, e.g. "Khối 11"
   gender?: 'Nam' | 'Nữ';
