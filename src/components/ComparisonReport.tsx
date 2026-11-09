@@ -254,7 +254,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           <button
             onClick={handleExportPNG}
             disabled={isExporting !== null}
-            className="h-9 px-3 rounded-xl border border-indigo-200 bg-indigo-50/80 hover:bg-indigo-100 text-xs font-bold text-indigo-700 flex items-center gap-1.5 transition active:scale-95 disabled:opacity-60 disabled:cursor-wait"
+            className="min-h-11 px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50/80 hover:bg-indigo-100 text-xs font-bold text-indigo-700 flex items-center gap-1.5 transition active:scale-95 disabled:opacity-60 disabled:cursor-wait"
             title="Tải báo cáo về máy dạng ảnh PNG"
           >
             {isExporting === 'png' ? (
@@ -269,7 +269,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           <button
             onClick={handleExportPDF}
             disabled={isExporting !== null}
-            className="h-9 px-3 rounded-xl border border-rose-200 bg-rose-50/80 hover:bg-rose-100 text-xs font-bold text-rose-700 flex items-center gap-1.5 transition active:scale-95 disabled:opacity-60 disabled:cursor-wait"
+            className="min-h-11 px-3 py-2 rounded-xl border border-rose-200 bg-rose-50/80 hover:bg-rose-100 text-xs font-bold text-rose-700 flex items-center gap-1.5 transition active:scale-95 disabled:opacity-60 disabled:cursor-wait"
             title="Tải báo cáo về máy dạng tài liệu PDF"
           >
             {isExporting === 'pdf' ? (
@@ -283,7 +283,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           {/* Share summary */}
           <button
             onClick={handleShare}
-            className="h-9 px-3 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 flex items-center gap-1.5 hover:bg-slate-50 transition"
+            className="min-h-11 px-3 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 flex items-center gap-1.5 hover:bg-slate-50 transition"
           >
             <Share2 className="w-3.5 h-3.5" />
             <span>{copyNotice ? 'Đã sao chép' : 'Chia sẻ tóm tắt'}</span>
@@ -292,7 +292,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           {/* Làm lại bài khảo sát mới */}
           <button
             onClick={onRestart}
-            className="h-9 px-3 rounded-xl border border-slate-200 bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 flex items-center gap-1.5 transition active:scale-95 shadow-xs"
+            className="min-h-11 px-3 py-2 rounded-xl border border-slate-200 bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-800 flex items-center gap-1.5 transition active:scale-95 shadow-xs"
             title="Bắt đầu làm bài khảo sát mới từ đầu"
           >
             <RotateCcw className="w-3.5 h-3.5 text-indigo-600" />
@@ -768,7 +768,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
             {/* Close X button */}
             <button
               onClick={() => setShowCompletionModal(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition"
+              className="absolute top-3 right-3 min-w-11 min-h-11 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition"
               title="Đóng thông báo"
             >
               <X className="w-4 h-4" />
