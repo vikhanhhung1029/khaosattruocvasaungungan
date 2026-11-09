@@ -261,7 +261,7 @@ export const SelectiveAttentionTest: React.FC<SelectiveAttentionTestProps> = ({
             </span>
             <button
               onClick={handleFinish}
-              className="text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200"
+              className="min-h-11 text-xs font-semibold text-slate-600 hover:text-slate-900 px-3 py-2 rounded-lg border border-slate-200"
             >
               Hoàn thành sớm
             </button>
