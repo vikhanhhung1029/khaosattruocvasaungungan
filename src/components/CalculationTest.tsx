@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Calculator, Timer, ArrowRight, CheckCircle2, RotateCcw } from 'lucide-react';
 import type { CalculationTestResult, CalculationItemResult } from '../types';
 
@@ -35,8 +35,6 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
   }, []);
 
   const current = questions[index];
-  const accuracy = useMemo(() => items.length ? Math.round(items.filter(x => x.isCorrect).length / items.length * 100) : 0, [items]);
-
   const start = () => {
     setIndex(0);
     setAnswer('');
