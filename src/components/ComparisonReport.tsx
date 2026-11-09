@@ -465,7 +465,7 @@ export const ComparisonReport: React.FC<ComparisonReportProps> = ({
           <div className="space-y-3.5">
             {/* 1. Mức độ tỉnh táo */}
             <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/50 space-y-2">
-              <div className="flex justify-between items-center text-xs">
+              <div className="flex flex-wrap justify-between items-center gap-2 text-xs">
                 <span className="font-bold text-slate-800 flex items-center gap-1.5">
                   <Smile className="w-4 h-4 text-indigo-600" />
                   1. Mức độ tỉnh táo (Thang điểm 1 - 5)
