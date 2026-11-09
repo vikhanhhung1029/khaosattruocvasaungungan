@@ -205,7 +205,7 @@ export const SelectiveAttentionTest: React.FC<SelectiveAttentionTestProps> = ({
         <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-200 shadow-sm space-y-4">
           {/* Progress bar & counters */}
           <div className="space-y-1.5">
-            <div className="flex justify-between text-xs text-slate-600">
+            <div className="flex flex-wrap justify-between gap-1 text-xs text-slate-600">
               <span>
                 Tiến độ: <strong className="text-emerald-600 font-bold font-mono">{foundCorrect}</strong> / {EXACT_TARGET_COUNT} chữ A
               </span>
