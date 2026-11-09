@@ -81,7 +81,7 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
     return sessions.filter((s) => {
       const info = s.studentInfo || ({} as FullNapSession['studentInfo']);
       const matchesTerm = !term || [
-        s.id, info.studentId, info.studentName, info.school, info.className,
+        s.id, info.studentId, info.school, info.className,
       ].some((v) => String(v || '').toLowerCase().includes(term));
       return matchesTerm
         && (classFilter === 'all' || info.className === classFilter)
@@ -242,7 +242,7 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
               <tr className="border-t"><td className="p-3">Mức tỉnh táo</td><td className="p-3 text-center">{selected.preNap?.alertness}/5</td><td className="p-3 text-center">{selected.postNap?.alertness}/5</td></tr>
               <tr className="border-t"><td className="p-3">Mức mệt mỏi</td><td className="p-3 text-center">{selected.preNap?.fatigue}/5</td><td className="p-3 text-center">{selected.postNap?.fatigue}/5</td></tr>
               <tr className="border-t"><td className="p-3">Thời gian phản xạ trung bình</td><td className="p-3 text-center">{selected.preNap?.reactionTest?.averageTime ?? '—'} ms</td><td className="p-3 text-center">{selected.postNap?.reactionTest?.averageTime ?? '—'} ms</td></tr>
-              <tr className="border-t"><td className="p-3">Độ chính xác chú ý</td><td className="p-3 text-center">{selected.preNap?.attentionTest?.accuracyPercentage ?? '—'}%</td><td className="p-3 text-center">{selected.postNap?.attentionTest?.accuracyPercentage ?? '—'}%</td></tr>
+              <tr className="border-t"><td className="p-3">Điểm chú ý ròng</td><td className="p-3 text-center">{selected.preNap?.attentionTest?.accuracyPercentage ?? '—'}%</td><td className="p-3 text-center">{selected.postNap?.attentionTest?.accuracyPercentage ?? '—'}%</td></tr>
               <tr className="border-t"><td className="p-3">Độ chính xác trí nhớ</td><td className="p-3 text-center">{selected.preNap?.memoryTest?.accuracyPercentage ?? '—'}%</td><td className="p-3 text-center">{selected.postNap?.memoryTest?.accuracyPercentage ?? '—'}%</td></tr>
             </tbody></table></div>
             <details className="mt-5"><summary className="cursor-pointer text-sm font-semibold text-indigo-700">Xem dữ liệu JSON đầy đủ</summary><pre className="mt-3 p-3 rounded-lg bg-slate-950 text-slate-100 text-xs overflow-auto max-h-96">{JSON.stringify(selected, null, 2)}</pre></details>
