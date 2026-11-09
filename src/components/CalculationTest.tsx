@@ -28,6 +28,7 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
   const [feedback, setFeedback] = useState<CalculationItemResult | null>(null);
   const startedAtRef = useRef<number | null>(null);
   const timerRef = useRef<number | null>(null);
+  const finalElapsedRef = useRef<number>(0);
 
   useEffect(() => () => {
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
@@ -43,6 +44,7 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     setElapsedMs(0);
     setFeedback(null);
     startedAtRef.current = performance.now();
+    finalElapsedRef.current = 0;
     if (timerRef.current !== null) window.clearInterval(timerRef.current);
     timerRef.current = window.setInterval(() => {
       if (startedAtRef.current !== null) setElapsedMs(Math.floor(performance.now() - startedAtRef.current));
@@ -65,6 +67,13 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     const nextItems = [...items, item];
     setItems(nextItems);
     setFeedback(item);
+    if (index === 2 && startedAtRef.current !== null) {
+      finalElapsedRef.current = Math.max(0, Math.round(performance.now() - startedAtRef.current));
+      setElapsedMs(finalElapsedRef.current);
+      startedAtRef.current = null;
+      if (timerRef.current !== null) window.clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     setAnswer('');
     setStage('feedback');
   };
@@ -75,11 +84,6 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
       setStage('answer');
       return;
     }
-    const totalTime = startedAtRef.current === null ? elapsedMs : Math.max(0, Math.round(performance.now() - startedAtRef.current));
-    if (timerRef.current !== null) window.clearInterval(timerRef.current);
-    timerRef.current = null;
-    setElapsedMs(totalTime);
-    startedAtRef.current = null;
     setStage('result');
   };
 
@@ -101,6 +105,7 @@ export const CalculationTest: React.FC<CalculationTestProps> = ({ phaseTitle, on
     setItems([]);
     setAnswer('');
     setElapsedMs(0);
+    finalElapsedRef.current = 0;
   };
 
   return (
