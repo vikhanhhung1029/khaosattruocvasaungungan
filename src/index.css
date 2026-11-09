@@ -12,6 +12,76 @@ html, body {
   touch-action: manipulation;
 }
 
+
+/* Responsive layout and accessibility safeguards */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 4.5rem;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: 3px solid rgb(99 102 241 / 65%);
+  outline-offset: 2px;
+}
+
+img,
+svg,
+canvas {
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .text-\\[9px\\] {
+    font-size: 10px !important;
+  }
+
+  .text-\\[10px\\] {
+    font-size: 11px !important;
+  }
+
+  /* Keep long survey labels from forcing horizontal page scrolling. */
+  main,
+  header,
+  section {
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Print / PDF generation styles */
 @media print {
   body {
