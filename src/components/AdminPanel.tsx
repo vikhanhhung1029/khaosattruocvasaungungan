@@ -232,6 +232,7 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
             <div className="flex justify-between items-start gap-3 mb-5"><div><h3 className="text-lg font-bold">Chi tiết phiên khảo sát</h3><p className="text-xs text-slate-500 break-all">{selected.id}</p></div><button onClick={() => setSelected(null)} className="p-2 rounded-lg hover:bg-slate-100"><X /></button></div>
             <div className="grid sm:grid-cols-2 gap-3 text-sm">
               <div className="rounded-lg bg-slate-50 p-3"><b>Mã người thực hiện:</b> {selected.studentInfo?.studentId || '—'}</div>
+              <div className="rounded-lg bg-slate-50 p-3"><b>Họ và tên:</b> {selected.studentInfo?.studentName || 'Không cung cấp'}</div>
               <div className="rounded-lg bg-slate-50 p-3"><b>Trường:</b> {selected.studentInfo?.school || '—'}</div>
               <div className="rounded-lg bg-slate-50 p-3"><b>Khối/lớp:</b> {selected.studentInfo?.className || '—'}</div>
               <div className="rounded-lg bg-slate-50 p-3"><b>Giới tính:</b> {selected.studentInfo?.gender || '—'}</div>
@@ -247,6 +248,8 @@ export function AdminPanel({ onClose }: AdminPanelProps) {
               <tr className="border-t"><td className="p-3">Thời gian phản xạ trung bình</td><td className="p-3 text-center">{selected.preNap?.reactionTest?.averageTime ?? '—'} ms</td><td className="p-3 text-center">{selected.postNap?.reactionTest?.averageTime ?? '—'} ms</td></tr>
               <tr className="border-t"><td className="p-3">Điểm chú ý ròng</td><td className="p-3 text-center">{selected.preNap?.attentionTest?.accuracyPercentage ?? '—'}%</td><td className="p-3 text-center">{selected.postNap?.attentionTest?.accuracyPercentage ?? '—'}%</td></tr>
               <tr className="border-t"><td className="p-3">Độ chính xác trí nhớ</td><td className="p-3 text-center">{selected.preNap?.memoryTest?.accuracyPercentage ?? '—'}%</td><td className="p-3 text-center">{selected.postNap?.memoryTest?.accuracyPercentage ?? '—'}%</td></tr>
+              <tr className="border-t"><td className="p-3">Tính toán (số câu đúng)</td><td className="p-3 text-center">{selected.preNap?.calculationTest ? `${selected.preNap.calculationTest.correctCount}/3` : '—'}</td><td className="p-3 text-center">{selected.postNap?.calculationTest ? `${selected.postNap.calculationTest.correctCount}/3` : '—'}</td></tr>
+              <tr className="border-t"><td className="p-3">Thời gian tính toán</td><td className="p-3 text-center">{selected.preNap?.calculationTest ? (selected.preNap.calculationTest.totalTimeMs / 1000).toFixed(2) + ' s' : '—'}</td><td className="p-3 text-center">{selected.postNap?.calculationTest ? (selected.postNap.calculationTest.totalTimeMs / 1000).toFixed(2) + ' s' : '—'}</td></tr>
             </tbody></table></div>
             <details className="mt-5"><summary className="cursor-pointer text-sm font-semibold text-indigo-700">Xem dữ liệu JSON đầy đủ</summary><pre className="mt-3 p-3 rounded-lg bg-slate-950 text-slate-100 text-xs overflow-auto max-h-96">{JSON.stringify(selected, null, 2)}</pre></details>
           </div>
